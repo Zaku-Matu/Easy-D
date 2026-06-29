@@ -3,15 +3,26 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GPS・時間管理</title>
-    <!-- Tailwind CSSの読み込み -->
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React本体の読み込み -->
+    <!-- React -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <!-- JSXを翻訳するBabelの読み込み -->
+    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        /* iPhoneでのダブルタップズーム防止 */
+        button, a, input { touch-action: manipulation; }
+        /* 数字入力の上下矢印(スピンボタン)を隠してスッキリさせる */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none; margin: 0;
+        }
+        input[type="number"] { -moz-appearance: textfield; }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
     <div id="root"></div>
@@ -21,40 +32,26 @@
 
         // --- アイコン部品 ---
         const MapPin = ({ size, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
         );
-
         const Lock = ({ size, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
         );
-
         const RotateCcw = ({ size, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path>
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
         );
-
         const X = ({ size, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         );
-
         const ExternalLink = ({ size, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
         );
-
-        // 新しく追加したダウンロードアイコン
         const Download = ({ size, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        );
+        // ★新設：マイクアイコン
+        const Mic = ({ size, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
         );
 
         // --- メインアプリ ---
@@ -62,11 +59,10 @@
             const [items, setItems] = useState([]);
             const [isLocked, setIsLocked] = useState(false);
             const [statusMsg, setStatusMsg] = useState("");
+            const [recordingId, setRecordingId] = useState(null); // 録音中のアイテムID
             
             const [confirmDialog, setConfirmDialog] = useState({
-                isOpen: false,
-                message: "",
-                onConfirm: null
+                isOpen: false, message: "", onConfirm: null
             });
 
             useEffect(() => {
@@ -78,11 +74,9 @@
                 } else {
                     const initialItems = Array.from({ length: 40 }, (_, i) => ({
                         id: i + 1,
-                        arrival: null,
-                        departure: null,
-                        duration: null,
-                        location: null,
-                        mapUrl: null,
+                        arrival: null, departure: null, duration: null,
+                        del: "", pic: "", // ★新設：納品と回収の数
+                        location: null, mapUrl: null,
                     }));
                     setItems(initialItems);
                 }
@@ -92,6 +86,15 @@
                 setItems(newItems);
                 localStorage.setItem('countAppData', JSON.stringify(newItems));
                 localStorage.setItem('isLocked', locked);
+            };
+
+            // ★新設：数字の手入力での保存
+            const handleNumberChange = (id, field, value) => {
+                setItems(prev => {
+                    const newItems = prev.map(item => item.id === id ? { ...item, [field]: value } : item);
+                    localStorage.setItem('countAppData', JSON.stringify(newItems));
+                    return newItems;
+                });
             };
 
             const recordAction = (id, type) => {
@@ -104,7 +107,6 @@
                     const newItems = prevItems.map(item => {
                         if (item.id === id) {
                             let updatedItem = { ...item, [type]: timeString };
-                            
                             const arrivalTime = type === 'arrival' ? timeString : item.arrival;
                             const departureTime = type === 'departure' ? timeString : item.departure;
                             
@@ -112,7 +114,7 @@
                                 const [h1, m1] = arrivalTime.split(':').map(Number);
                                 const [h2, m2] = departureTime.split(':').map(Number);
                                 const diff = (h2 * 60 + m2) - (h1 * 60 + m1);
-                                updatedItem.duration = diff >= 0 ? `${diff}分` : '時間エラー';
+                                updatedItem.duration = diff >= 0 ? `${diff}分` : 'エラー';
                             }
                             return updatedItem;
                         }
@@ -122,12 +124,15 @@
                     return newItems;
                 });
 
-                if (!navigator.geolocation) {
-                    showStatus("時刻のみ記録しました (GPS非対応)");
-                    return;
+                // ★出発を押した瞬間に、自動で「Del」入力枠にカーソルを合わせる（フォーカス）
+                if (type === 'departure') {
+                    setTimeout(() => {
+                        const el = document.getElementById(`del-input-${id}`);
+                        if (el) el.focus();
+                    }, 100);
                 }
 
-                showStatus("位置情報を取得中...");
+                if (!navigator.geolocation) return;
 
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
@@ -142,14 +147,65 @@
                             localStorage.setItem('countAppData', JSON.stringify(newItems));
                             return newItems;
                         });
-                        showStatus("時刻と位置情報を記録しました");
+                        showStatus("位置情報も記録しました");
                     },
-                    (err) => {
-                        console.warn("GPS Error:", err);
-                        showStatus("時刻のみ記録しました (GPS未取得)");
-                    },
-                    { timeout: 5000, maximumAge: 0 }
+                    () => {}, { timeout: 5000, maximumAge: 0 }
                 );
+            };
+
+            // ★新設：音声認識のスタート処理
+            const startVoiceInput = (id) => {
+                if (isLocked) return;
+                
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                    showStatus("お使いのブラウザは音声入力に非対応です");
+                    return;
+                }
+
+                setRecordingId(id);
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'ja-JP';
+
+                recognition.onresult = (event) => {
+                    let transcript = event.results[0][0].transcript;
+                    
+                    // 漢数字をアラビア数字に変換（iOS用対策）
+                    const kanjiMap = {'一':1, '二':2, '三':3, '四':4, '五':5, '六':6, '七':7, '八':8, '九':9, '〇':0};
+                    transcript = transcript.replace(/[一二三四五六七八九〇]/g, match => kanjiMap[match]);
+                    transcript = transcript.replace(/十/g, '10'); // 簡易的な「十」の対応
+
+                    // 音声から数字だけを抽出する
+                    const numbers = transcript.match(/\d+/g);
+                    
+                    if (numbers && numbers.length > 0) {
+                        const delNum = numbers[0]; // 最初の数字を納品に
+                        const picNum = numbers.length > 1 ? numbers[1] : ""; // 次の数字を回収に
+                        
+                        handleNumberChange(id, 'del', delNum);
+                        handleNumberChange(id, 'pic', picNum);
+                        showStatus(`認識完了：納品 ${delNum} / 回収 ${picNum}`);
+                    } else {
+                        showStatus(`数字が聞き取れませんでした: ${transcript}`);
+                    }
+                    setRecordingId(null);
+                };
+
+                recognition.onerror = (e) => {
+                    setRecordingId(null);
+                    showStatus("マイクのエラーが発生しました");
+                };
+
+                recognition.onend = () => {
+                    setRecordingId(null);
+                };
+
+                try {
+                    recognition.start();
+                    showStatus("「納品数、回収数」の順に話してください（例：5と3）");
+                } catch(e) {
+                    setRecordingId(null);
+                }
             };
 
             const showStatus = (msg) => {
@@ -157,32 +213,25 @@
                 setTimeout(() => setStatusMsg(""), 3000);
             };
 
-            // ★新機能：CSV書き出し機能
             const exportData = () => {
-                // 記録済みのデータだけを抽出
-                const recordedItems = items.filter(item => item.arrival || item.departure);
-                
+                const recordedItems = items.filter(item => item.arrival || item.departure || item.del || item.pic);
                 if (recordedItems.length === 0) {
                     showStatus("書き出すデータがありません");
                     return;
                 }
 
-                // CSVのヘッダー行
-                const header = "No,到着時間,出発時間,滞在時間,位置情報,GoogleMap URL\n";
-                // データをカンマ区切りの文字列に変換
+                // ★CSVの項目に「納品数(Del)」と「回収数(Pic)」を追加
+                const header = "No,到着時間,出発時間,滞在時間,納品数(Del),回収数(Pic),位置情報,GoogleMap URL\n";
                 const rows = recordedItems.map(item => {
-                    return `${item.id},${item.arrival || ''},${item.departure || ''},${item.duration || ''},"${item.location || ''}",${item.mapUrl || ''}`;
+                    return `${item.id},${item.arrival || ''},${item.departure || ''},${item.duration || ''},${item.del || ''},${item.pic || ''},"${item.location || ''}",${item.mapUrl || ''}`;
                 }).join("\n");
 
-                // 文字化けを防ぐためのBOM（Excelなどで開くため）
                 const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
                 const blob = new Blob([bom, header + rows], { type: 'text/csv' });
                 const url = URL.createObjectURL(blob);
                 
-                // ダウンロード用の見えないリンクを作ってクリックさせる
                 const a = document.createElement('a');
                 a.href = url;
-                // ファイル名には今日の日付をつける
                 const today = new Date();
                 a.download = `GPS記録_${today.getFullYear()}${(today.getMonth()+1).toString().padStart(2,'0')}${today.getDate().toString().padStart(2,'0')}.csv`;
                 document.body.appendChild(a);
@@ -211,7 +260,7 @@
                     message: 'すべての記録をリセットしますか？',
                     onConfirm: () => {
                         const initialItems = Array.from({ length: 40 }, (_, i) => ({
-                            id: i + 1, arrival: null, departure: null, duration: null, location: null, mapUrl: null,
+                            id: i + 1, arrival: null, departure: null, duration: null, del: "", pic: "", location: null, mapUrl: null,
                         }));
                         setIsLocked(false);
                         saveData(initialItems, false);
@@ -231,40 +280,27 @@
                             <MapPin size={20} className="text-red-500" /> 記録アプリ
                         </h1>
                         <div className="flex gap-2">
-                            {/* データ出力ボタンを追加 */}
-                            <button 
-                                onClick={exportData} 
-                                className="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
-                                title="CSVデータ出力"
-                            >
+                            <button onClick={exportData} className="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="CSVデータ出力">
                                 <Download size={20} />
                             </button>
-                            <button 
-                                onClick={requestToggleLock} 
-                                className={`p-2 rounded-lg transition-colors ${isLocked ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                                title="ロック切り替え"
-                            >
+                            <button onClick={requestToggleLock} className={`p-2 rounded-lg transition-colors ${isLocked ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
                                 <Lock size={20} />
                             </button>
-                            <button 
-                                onClick={requestResetAll} 
-                                className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
-                                title="リセット"
-                            >
+                            <button onClick={requestResetAll} className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">
                                 <RotateCcw size={20} />
                             </button>
                         </div>
                     </header>
 
                     {statusMsg && (
-                        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg text-sm z-20 animate-pulse">
+                        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg text-sm z-20 animate-pulse text-center w-[90%] max-w-sm">
                             {statusMsg}
                         </div>
                     )}
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 pb-8">
                         {items.map((item) => (
-                            <div key={item.id} className={`p-3 rounded-xl border transition-all ${isLocked ? 'bg-gray-100 opacity-80' : 'bg-white shadow-sm border-gray-100 hover:shadow-md'}`}>
+                            <div key={item.id} className={`p-3 rounded-xl border transition-all ${isLocked ? 'bg-gray-100 opacity-80' : 'bg-white shadow-sm border-gray-100'}`}>
                                 <div className="flex justify-between items-center mb-2">
                                     <span className="text-sm font-bold text-gray-500">No. {item.id}</span>
                                     <span className={`text-xs font-bold ${item.duration ? 'text-blue-600 bg-blue-50 px-2 py-1 rounded' : 'text-gray-400'}`}>
@@ -276,44 +312,66 @@
                                     <button 
                                         disabled={isLocked} 
                                         onClick={() => recordAction(item.id, 'arrival')} 
-                                        className={`py-2 rounded text-[11px] font-medium transition-colors ${
-                                            item.arrival 
-                                                ? 'bg-blue-500 text-white shadow-inner' 
-                                                : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
-                                        } ${isLocked ? 'cursor-not-allowed opacity-60' : ''}`}
+                                        className={`py-2 rounded text-[11px] font-medium transition-colors ${item.arrival ? 'bg-blue-500 text-white shadow-inner' : 'bg-blue-50 text-blue-600'} ${isLocked ? 'opacity-60' : ''}`}
                                     >
                                         到着: {item.arrival ? item.arrival.slice(0, 5) : '--:--'}
                                     </button>
                                     <button 
                                         disabled={isLocked} 
                                         onClick={() => recordAction(item.id, 'departure')} 
-                                        className={`py-2 rounded text-[11px] font-medium transition-colors ${
-                                            item.departure 
-                                                ? 'bg-orange-500 text-white shadow-inner' 
-                                                : 'bg-orange-50 text-orange-600 hover:bg-orange-100'
-                                        } ${isLocked ? 'cursor-not-allowed opacity-60' : ''}`}
+                                        className={`py-2 rounded text-[11px] font-medium transition-colors ${item.departure ? 'bg-orange-500 text-white shadow-inner' : 'bg-orange-50 text-orange-600'} ${isLocked ? 'opacity-60' : ''}`}
                                     >
                                         出発: {item.departure ? item.departure.slice(0, 5) : '--:--'}
                                     </button>
                                 </div>
+
+                                {/* ★新設：Del/Pic入力枠とマイクボタン */}
+                                <div className="flex items-center gap-1 mb-2 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
+                                    <span className="text-[10px] font-bold text-slate-500 w-12 text-center leading-tight">Del/Pic</span>
+                                    
+                                    {/* 繋がった数字入力枠 */}
+                                    <div className="flex flex-1 items-center bg-white rounded border border-slate-300 overflow-hidden shadow-inner h-8">
+                                        <input 
+                                            id={`del-input-${item.id}`}
+                                            type="number" 
+                                            value={item.del}
+                                            onChange={(e) => handleNumberChange(item.id, 'del', e.target.value)}
+                                            disabled={isLocked}
+                                            className="w-full p-1 text-center text-sm font-bold text-gray-700 outline-none bg-transparent" 
+                                            placeholder="納品" 
+                                        />
+                                        <span className="bg-slate-100 h-full px-1.5 flex items-center text-slate-400 border-x border-slate-200">-</span>
+                                        <input 
+                                            type="number" 
+                                            value={item.pic}
+                                            onChange={(e) => handleNumberChange(item.id, 'pic', e.target.value)}
+                                            disabled={isLocked}
+                                            className="w-full p-1 text-center text-sm font-bold text-gray-700 outline-none bg-transparent" 
+                                            placeholder="回収" 
+                                        />
+                                    </div>
+                                    
+                                    {/* マイクボタン */}
+                                    <button 
+                                        onClick={() => startVoiceInput(item.id)}
+                                        disabled={isLocked || recordingId === item.id}
+                                        className={`p-1.5 rounded-md transition-colors flex-shrink-0 h-8 flex items-center justify-center ${
+                                            recordingId === item.id ? 'bg-red-500 text-white animate-pulse' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                                        } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        title="音声入力"
+                                    >
+                                        <Mic size={16} />
+                                    </button>
+                                </div>
                                 
-                                <div className="h-5 flex items-center">
+                                <div className="h-4 flex items-center mt-1">
                                     {item.mapUrl ? (
-                                        <a 
-                                            href={item.mapUrl} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer" 
-                                            className="text-[10px] text-blue-500 hover:text-blue-700 truncate flex items-center gap-1 hover:underline"
-                                        >
-                                            <ExternalLink size={10} className="text-blue-500" /> {item.location} (マップで開く)
+                                        <a href={item.mapUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-500 truncate flex items-center gap-1 hover:underline">
+                                            <ExternalLink size={10} /> {item.location}
                                         </a>
                                     ) : item.location ? (
-                                        <div className="text-[10px] text-gray-500 truncate flex items-center gap-1">
-                                            <MapPin size={10} className="text-gray-400" /> {item.location}
-                                        </div>
-                                    ) : (
-                                        <div className="text-[10px] text-gray-300">位置情報未記録</div>
-                                    )}
+                                        <div className="text-[10px] text-gray-500 truncate flex items-center gap-1"><MapPin size={10} /> {item.location}</div>
+                                    ) : null}
                                 </div>
                             </div>
                         ))}
@@ -324,26 +382,12 @@
                             <div className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden">
                                 <div className="p-4 border-b border-gray-100 flex justify-between items-center">
                                     <h3 className="font-bold text-gray-800">確認</h3>
-                                    <button onClick={closeDialog} className="text-gray-400 hover:text-gray-600 p-1">
-                                        <X size={18} />
-                                    </button>
+                                    <button onClick={closeDialog} className="text-gray-400 hover:text-gray-600 p-1"><X size={18} /></button>
                                 </div>
-                                <div className="p-6 text-gray-600 text-sm">
-                                    {confirmDialog.message}
-                                </div>
+                                <div className="p-6 text-gray-600 text-sm">{confirmDialog.message}</div>
                                 <div className="p-4 bg-gray-50 flex justify-end gap-2 border-t border-gray-100">
-                                    <button 
-                                        onClick={closeDialog}
-                                        className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors"
-                                    >
-                                        キャンセル
-                                    </button>
-                                    <button 
-                                        onClick={confirmDialog.onConfirm}
-                                        className="px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm"
-                                    >
-                                        はい
-                                    </button>
+                                    <button onClick={closeDialog} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-200">キャンセル</button>
+                                    <button onClick={confirmDialog.onConfirm} className="px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700">はい</button>
                                 </div>
                             </div>
                         </div>
