@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -14,56 +13,42 @@
     <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        /* iPhoneでのダブルタップズーム防止 */
+        body { overflow-x: hidden; } /* 横揺れ防止 */
         button, a, input { touch-action: manipulation; }
-        /* 数字入力の上下矢印(スピンボタン)を隠してスッキリさせる */
         input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none; margin: 0;
-        }
-        input[type="number"] { -moz-appearance: textfield; }
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"], input[type="time"], input[type="text"] { -moz-appearance: textfield; }
+        input:focus { outline: 2px solid #3b82f6; outline-offset: -1px; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-100 text-gray-900">
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect } = React;
 
         // --- アイコン部品 ---
-        const MapPin = ({ size, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-        );
-        const Lock = ({ size, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-        );
-        const RotateCcw = ({ size, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
-        );
-        const X = ({ size, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        );
-        const ExternalLink = ({ size, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-        );
-        const Download = ({ size, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-        );
-        // ★新設：マイクアイコン
-        const Mic = ({ size, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
-        );
+        const MapPin = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>;
+        const Lock = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>;
+        const RotateCcw = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>;
+        const X = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
+        const ExternalLink = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>;
+        const Download = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>;
+        const Mic = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>;
+        const ChevronLeft = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m15 18-6-6 6-6"/></svg>;
+        const ChevronRight = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m9 18 6-6-6-6"/></svg>;
+        const Edit2 = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>;
+        const Check = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M20 6 9 17l-5-5"/></svg>;
 
-        // --- メインアプリ ---
         function App() {
             const [items, setItems] = useState([]);
             const [isLocked, setIsLocked] = useState(false);
             const [statusMsg, setStatusMsg] = useState("");
-            const [recordingId, setRecordingId] = useState(null); // 録音中のアイテムID
-            
-            const [confirmDialog, setConfirmDialog] = useState({
-                isOpen: false, message: "", onConfirm: null
-            });
+            const [recordingId, setRecordingId] = useState(null);
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [editModeId, setEditModeId] = useState(null);
+
+            const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, message: "", onConfirm: null });
 
             useEffect(() => {
                 const savedData = localStorage.getItem('countAppData');
@@ -73,25 +58,54 @@
                     setIsLocked(savedLock === 'true');
                 } else {
                     const initialItems = Array.from({ length: 40 }, (_, i) => ({
-                        id: i + 1,
-                        arrival: null, departure: null, duration: null,
-                        del: "", pic: "", // ★新設：納品と回収の数
-                        location: null, mapUrl: null,
+                        id: i + 1, arrival: null, departure: null, duration: null,
+                        del: "", pic: "", memo: "", location: null, mapUrl: null,
+                        product: { green: false, blue: false, gray: false }
                     }));
                     setItems(initialItems);
                 }
             }, []);
 
-            const saveData = (newItems, locked = isLocked) => {
-                setItems(newItems);
-                localStorage.setItem('countAppData', JSON.stringify(newItems));
-                localStorage.setItem('isLocked', locked);
-            };
-
-            // ★新設：数字の手入力での保存
-            const handleNumberChange = (id, field, value) => {
+            const handleTextChange = (id, field, value) => {
                 setItems(prev => {
                     const newItems = prev.map(item => item.id === id ? { ...item, [field]: value } : item);
+                    localStorage.setItem('countAppData', JSON.stringify(newItems));
+                    return newItems;
+                });
+            };
+
+            const handleTimeChange = (id, field, value) => {
+                setItems(prev => {
+                    const newItems = prev.map(item => {
+                        if (item.id === id) {
+                            let updatedItem = { ...item, [field]: value };
+                            if (updatedItem.arrival && updatedItem.departure) {
+                                const [h1, m1] = updatedItem.arrival.split(':').map(Number);
+                                const [h2, m2] = updatedItem.departure.split(':').map(Number);
+                                const diff = (h2 * 60 + m2) - (h1 * 60 + m1);
+                                updatedItem.duration = diff >= 0 ? `${diff}分` : 'エラー';
+                            } else {
+                                updatedItem.duration = null;
+                            }
+                            return updatedItem;
+                        }
+                        return item;
+                    });
+                    localStorage.setItem('countAppData', JSON.stringify(newItems));
+                    return newItems;
+                });
+            };
+
+            const toggleProduct = (id, color) => {
+                if (isLocked) return;
+                setItems(prev => {
+                    const newItems = prev.map(item => {
+                        if (item.id === id) {
+                            const prod = item.product || { green: false, blue: false, gray: false };
+                            return { ...item, product: { ...prod, [color]: !prod[color] } };
+                        }
+                        return item;
+                    });
                     localStorage.setItem('countAppData', JSON.stringify(newItems));
                     return newItems;
                 });
@@ -124,7 +138,6 @@
                     return newItems;
                 });
 
-                // ★出発を押した瞬間に、自動で「Del」入力枠にカーソルを合わせる（フォーカス）
                 if (type === 'departure') {
                     setTimeout(() => {
                         const el = document.getElementById(`del-input-${id}`);
@@ -141,95 +154,110 @@
                         const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
                         setItems(prevItems => {
-                            const newItems = prevItems.map(item => 
-                                item.id === id ? { ...item, location: locString, mapUrl: mapUrl } : item
-                            );
+                            const newItems = prevItems.map(item => item.id === id ? { ...item, location: locString, mapUrl: mapUrl } : item);
                             localStorage.setItem('countAppData', JSON.stringify(newItems));
                             return newItems;
                         });
-                        showStatus("位置情報も記録しました");
+                        showStatus("位置情報を記録しました");
                     },
                     () => {}, { timeout: 5000, maximumAge: 0 }
                 );
             };
 
-            // ★新設：音声認識のスタート処理
             const startVoiceInput = (id) => {
                 if (isLocked) return;
-                
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if (!SpeechRecognition) {
-                    showStatus("お使いのブラウザは音声入力に非対応です");
-                    return;
-                }
+                if (!SpeechRecognition) { showStatus("マイク非対応です"); return; }
 
-                setRecordingId(id);
+                setRecordingId(`num-${id}`);
                 const recognition = new SpeechRecognition();
                 recognition.lang = 'ja-JP';
 
                 recognition.onresult = (event) => {
                     let transcript = event.results[0][0].transcript;
-                    
-                    // 漢数字をアラビア数字に変換（iOS用対策）
                     const kanjiMap = {'一':1, '二':2, '三':3, '四':4, '五':5, '六':6, '七':7, '八':8, '九':9, '〇':0};
                     transcript = transcript.replace(/[一二三四五六七八九〇]/g, match => kanjiMap[match]);
-                    transcript = transcript.replace(/十/g, '10'); // 簡易的な「十」の対応
-
-                    // 音声から数字だけを抽出する
+                    transcript = transcript.replace(/十/g, '10');
                     const numbers = transcript.match(/\d+/g);
                     
                     if (numbers && numbers.length > 0) {
-                        const delNum = numbers[0]; // 最初の数字を納品に
-                        const picNum = numbers.length > 1 ? numbers[1] : ""; // 次の数字を回収に
-                        
-                        handleNumberChange(id, 'del', delNum);
-                        handleNumberChange(id, 'pic', picNum);
-                        showStatus(`認識完了：納品 ${delNum} / 回収 ${picNum}`);
-                    } else {
-                        showStatus(`数字が聞き取れませんでした: ${transcript}`);
+                        handleTextChange(id, 'del', numbers[0]);
+                        handleTextChange(id, 'pic', numbers.length > 1 ? numbers[1] : "");
+                        showStatus("数字を認識しました");
                     }
                     setRecordingId(null);
                 };
-
-                recognition.onerror = (e) => {
-                    setRecordingId(null);
-                    showStatus("マイクのエラーが発生しました");
-                };
-
-                recognition.onend = () => {
-                    setRecordingId(null);
-                };
-
-                try {
-                    recognition.start();
-                    showStatus("「納品数、回収数」の順に話してください（例：5と3）");
-                } catch(e) {
-                    setRecordingId(null);
-                }
+                recognition.onerror = () => { setRecordingId(null); showStatus("エラー"); };
+                recognition.onend = () => setRecordingId(null);
+                try { recognition.start(); showStatus("納品、回収の数字を言ってください"); } catch(e) { setRecordingId(null); }
             };
 
-            const showStatus = (msg) => {
-                setStatusMsg(msg);
-                setTimeout(() => setStatusMsg(""), 3000);
+            const startMemoVoiceInput = (id) => {
+                if (isLocked) return;
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) return;
+
+                setRecordingId(`memo-${id}`);
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'ja-JP';
+
+                recognition.onresult = (event) => {
+                    let text = event.results[0][0].transcript;
+                    const alphabetMap = { 'エー':'A','ビー':'B','シー':'C','ディー':'D','イー':'E','エフ':'F','ジー':'G','エイチ':'H','アイ':'I','ジェー':'J','ケー':'K','エル':'L','エム':'M','エヌ':'N','オー':'O','ピー':'P','キュー':'Q','アール':'R','エス':'S','ティー':'T','ユー':'U','ブイ':'V','ダブリュー':'W','エックス':'X','ワイ':'Y','ゼット':'Z','ハイフン':'-', 'の':'-', 'ダッシュ':'-', 'スラッシュ':'/', 'スペース':' ' };
+                    for(let key in alphabetMap) { text = text.replaceAll(key, alphabetMap[key]); }
+                    const kanjiMap = {'一':1, '二':2, '三':3, '四':4, '五':5, '六':6, '七':7, '八':8, '九':9, '〇':0};
+                    text = text.replace(/[一二三四五六七八九〇]/g, match => kanjiMap[match]);
+                    text = text.replace(/[Ａ-Ｚａ-ｚ０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+
+                    const currentItem = items.find(item => item.id === id);
+                    const newMemo = currentItem.memo ? currentItem.memo + " " + text : text;
+                    handleTextChange(id, 'memo', newMemo);
+                    showStatus("メモを認識しました");
+                    setRecordingId(null);
+                };
+                recognition.onerror = () => { setRecordingId(null); showStatus("エラー"); };
+                recognition.onend = () => setRecordingId(null);
+                try { recognition.start(); showStatus("店舗名や記号を話してください"); } catch(e) { setRecordingId(null); }
             };
+
+            const showStatus = (msg) => { setStatusMsg(msg); setTimeout(() => setStatusMsg(""), 3000); };
 
             const exportData = () => {
-                const recordedItems = items.filter(item => item.arrival || item.departure || item.del || item.pic);
-                if (recordedItems.length === 0) {
-                    showStatus("書き出すデータがありません");
-                    return;
-                }
-
-                // ★CSVの項目に「納品数(Del)」と「回収数(Pic)」を追加
-                const header = "No,到着時間,出発時間,滞在時間,納品数(Del),回収数(Pic),位置情報,GoogleMap URL\n";
+                const recordedItems = items.filter(item => item.arrival || item.departure || item.del || item.pic || item.memo || (item.product && (item.product.green || item.product.blue || item.product.gray)));
+                if (recordedItems.length === 0) { showStatus("書き出すデータがありません"); return; }
+                
+                const header = "No,到着時間,出発時間,滞在時間,納品商品,納品数(Del),回収数(Pic),メモ,位置情報,GoogleMap URL\n";
                 const rows = recordedItems.map(item => {
-                    return `${item.id},${item.arrival || ''},${item.departure || ''},${item.duration || ''},${item.del || ''},${item.pic || ''},"${item.location || ''}",${item.mapUrl || ''}`;
+                    const safeMemo = item.memo ? `"${item.memo.replace(/"/g, '""')}"` : "";
+                    
+                    const prod = item.product || {};
+                    const prodArr = [];
+                    if (prod.green) prodArr.push('緑');
+                    if (prod.blue) prodArr.push('青');
+                    if (prod.gray) prodArr.push('グレー');
+                    const prodStr = prodArr.join('・');
+
+                    return `${item.id},${item.arrival || ''},${item.departure || ''},${item.duration || ''},${prodStr},${item.del || ''},${item.pic || ''},${safeMemo},"${item.location || ''}",${item.mapUrl || ''}`;
                 }).join("\n");
+                
+                // ★集計ロジック（商品ごとの納品数・回収数の合計）
+                let greenDel = 0, blueDel = 0, grayDel = 0;
+                let greenPic = 0, bluePic = 0, grayPic = 0;
+                
+                recordedItems.forEach(item => {
+                    const d = parseInt(item.del, 10) || 0;
+                    const p = parseInt(item.pic, 10) || 0;
+                    const prod = item.product || {};
+                    if (prod.green) { greenDel += d; greenPic += p; }
+                    if (prod.blue)  { blueDel += d;  bluePic += p; }
+                    if (prod.gray)  { grayDel += d;  grayPic += p; }
+                });
+
+                const summary = `\n\n=== 商品別集計 ===\n商品,納品数(Del)合計,回収数(Pic)合計\n緑,${greenDel},${greenPic}\n青,${blueDel},${bluePic}\nグレー,${grayDel},${grayPic}\n`;
 
                 const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
-                const blob = new Blob([bom, header + rows], { type: 'text/csv' });
+                const blob = new Blob([bom, header + rows + summary], { type: 'text/csv' });
                 const url = URL.createObjectURL(blob);
-                
                 const a = document.createElement('a');
                 a.href = url;
                 const today = new Date();
@@ -238,156 +266,173 @@
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                
                 showStatus("データを書き出しました");
             };
 
-            const requestToggleLock = () => {
-                setConfirmDialog({
-                    isOpen: true,
-                    message: isLocked ? '入力を再開しますか？' : '全件の入力をロックして完了しますか？',
-                    onConfirm: () => {
-                        setIsLocked(!isLocked);
-                        localStorage.setItem('isLocked', !isLocked);
-                        closeDialog();
-                    }
-                });
+            const closeDialog = () => setConfirmDialog({ isOpen: false, message: "", onConfirm: null });
+
+            const goToNext = () => {
+                if (currentIndex < items.length - 1) {
+                    setCurrentIndex(currentIndex + 1);
+                    setEditModeId(null);
+                    window.scrollTo(0, 0);
+                }
+            };
+            const goToPrev = () => {
+                if (currentIndex > 0) {
+                    setCurrentIndex(currentIndex - 1);
+                    setEditModeId(null);
+                    window.scrollTo(0, 0);
+                }
             };
 
-            const requestResetAll = () => {
-                setConfirmDialog({
-                    isOpen: true,
-                    message: 'すべての記録をリセットしますか？',
-                    onConfirm: () => {
-                        const initialItems = Array.from({ length: 40 }, (_, i) => ({
-                            id: i + 1, arrival: null, departure: null, duration: null, del: "", pic: "", location: null, mapUrl: null,
-                        }));
-                        setIsLocked(false);
-                        saveData(initialItems, false);
-                        closeDialog();
-                    }
-                });
-            };
-
-            const closeDialog = () => {
-                setConfirmDialog({ isOpen: false, message: "", onConfirm: null });
-            };
+            if (items.length === 0) return null;
+            const item = items[currentIndex];
+            const isEditing = editModeId === item.id;
+            const prod = item.product || { green: false, blue: false, gray: false };
 
             return (
-                <div className="min-h-screen p-4 font-sans relative">
-                    <header className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100 sticky top-0 z-10">
-                        <h1 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                            <MapPin size={20} className="text-red-500" /> 記録アプリ
+                <div className="min-h-screen p-2 font-sans relative max-w-lg mx-auto pb-4">
+                    {/* ヘッダー（コンパクト化） */}
+                    <header className="flex justify-between items-center mb-2 bg-white p-3 rounded-xl shadow-sm border border-gray-200">
+                        <h1 className="text-lg font-bold text-gray-800 flex items-center gap-1">
+                            <MapPin size={20} className="text-red-500" /> 記録
                         </h1>
                         <div className="flex gap-2">
-                            <button onClick={exportData} className="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="CSVデータ出力">
-                                <Download size={20} />
-                            </button>
-                            <button onClick={requestToggleLock} className={`p-2 rounded-lg transition-colors ${isLocked ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-                                <Lock size={20} />
-                            </button>
-                            <button onClick={requestResetAll} className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">
-                                <RotateCcw size={20} />
-                            </button>
+                            <button onClick={exportData} className="p-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300"><Download size={20} /></button>
+                            <button onClick={() => setConfirmDialog({ isOpen: true, message: isLocked ? '入力を再開しますか？' : 'ロックしますか？', onConfirm: () => { setIsLocked(!isLocked); localStorage.setItem('isLocked', !isLocked); closeDialog(); }})} className={`p-2 rounded-lg ${isLocked ? 'bg-red-100 text-red-600 border border-red-300' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}><Lock size={20} /></button>
+                            <button onClick={() => setConfirmDialog({ isOpen: true, message: 'リセットしますか？', onConfirm: () => { const initialItems = Array.from({ length: 40 }, (_, i) => ({ id: i + 1, arrival: null, departure: null, duration: null, del: "", pic: "", memo: "", location: null, mapUrl: null, product: { green: false, blue: false, gray: false } })); setIsLocked(false); saveData(initialItems, false); closeDialog(); setCurrentIndex(0); }})} className="p-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300"><RotateCcw size={20} /></button>
                         </div>
                     </header>
 
                     {statusMsg && (
-                        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg text-sm z-20 animate-pulse text-center w-[90%] max-w-sm">
+                        <div className="fixed top-16 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-full shadow-lg text-sm font-bold z-20 animate-pulse text-center w-[80%]">
                             {statusMsg}
                         </div>
                     )}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 pb-8">
-                        {items.map((item) => (
-                            <div key={item.id} className={`p-3 rounded-xl border transition-all ${isLocked ? 'bg-gray-100 opacity-80' : 'bg-white shadow-sm border-gray-100'}`}>
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-sm font-bold text-gray-500">No. {item.id}</span>
-                                    <span className={`text-xs font-bold ${item.duration ? 'text-blue-600 bg-blue-50 px-2 py-1 rounded' : 'text-gray-400'}`}>
-                                        滞在: {item.duration || '--分'}
-                                    </span>
-                                </div>
-                                
-                                <div className="grid grid-cols-2 gap-2 mb-2">
-                                    <button 
-                                        disabled={isLocked} 
-                                        onClick={() => recordAction(item.id, 'arrival')} 
-                                        className={`py-2 rounded text-[11px] font-medium transition-colors ${item.arrival ? 'bg-blue-500 text-white shadow-inner' : 'bg-blue-50 text-blue-600'} ${isLocked ? 'opacity-60' : ''}`}
-                                    >
-                                        到着: {item.arrival ? item.arrival.slice(0, 5) : '--:--'}
-                                    </button>
-                                    <button 
-                                        disabled={isLocked} 
-                                        onClick={() => recordAction(item.id, 'departure')} 
-                                        className={`py-2 rounded text-[11px] font-medium transition-colors ${item.departure ? 'bg-orange-500 text-white shadow-inner' : 'bg-orange-50 text-orange-600'} ${isLocked ? 'opacity-60' : ''}`}
-                                    >
-                                        出発: {item.departure ? item.departure.slice(0, 5) : '--:--'}
-                                    </button>
-                                </div>
-
-                                {/* ★新設：Del/Pic入力枠とマイクボタン */}
-                                <div className="flex items-center gap-1 mb-2 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
-                                    <span className="text-[10px] font-bold text-slate-500 w-12 text-center leading-tight">Del/Pic</span>
-                                    
-                                    {/* 繋がった数字入力枠 */}
-                                    <div className="flex flex-1 items-center bg-white rounded border border-slate-300 overflow-hidden shadow-inner h-8">
-                                        <input 
-                                            id={`del-input-${item.id}`}
-                                            type="number" 
-                                            value={item.del}
-                                            onChange={(e) => handleNumberChange(item.id, 'del', e.target.value)}
-                                            disabled={isLocked}
-                                            className="w-full p-1 text-center text-sm font-bold text-gray-700 outline-none bg-transparent" 
-                                            placeholder="納品" 
-                                        />
-                                        <span className="bg-slate-100 h-full px-1.5 flex items-center text-slate-400 border-x border-slate-200">-</span>
-                                        <input 
-                                            type="number" 
-                                            value={item.pic}
-                                            onChange={(e) => handleNumberChange(item.id, 'pic', e.target.value)}
-                                            disabled={isLocked}
-                                            className="w-full p-1 text-center text-sm font-bold text-gray-700 outline-none bg-transparent" 
-                                            placeholder="回収" 
-                                        />
-                                    </div>
-                                    
-                                    {/* マイクボタン */}
-                                    <button 
-                                        onClick={() => startVoiceInput(item.id)}
-                                        disabled={isLocked || recordingId === item.id}
-                                        className={`p-1.5 rounded-md transition-colors flex-shrink-0 h-8 flex items-center justify-center ${
-                                            recordingId === item.id ? 'bg-red-500 text-white animate-pulse' : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
-                                        } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                        title="音声入力"
-                                    >
-                                        <Mic size={16} />
-                                    </button>
-                                </div>
-                                
-                                <div className="h-4 flex items-center mt-1">
-                                    {item.mapUrl ? (
-                                        <a href={item.mapUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-500 truncate flex items-center gap-1 hover:underline">
-                                            <ExternalLink size={10} /> {item.location}
-                                        </a>
-                                    ) : item.location ? (
-                                        <div className="text-[10px] text-gray-500 truncate flex items-center gap-1"><MapPin size={10} /> {item.location}</div>
-                                    ) : null}
-                                </div>
-                            </div>
-                        ))}
+                    {/* ナビゲーション（コンパクト化） */}
+                    <div className="flex justify-between items-center bg-white p-2 rounded-xl shadow-sm border border-gray-200 mb-2">
+                        <button onClick={goToPrev} disabled={currentIndex === 0} className={`p-2 rounded-lg ${currentIndex === 0 ? 'text-gray-200' : 'text-blue-600 bg-blue-50 active:bg-blue-100'}`}>
+                            <ChevronLeft size={24} />
+                        </button>
+                        <div className="text-xl font-extrabold text-gray-800">
+                            No. {item.id} <span className="text-sm text-gray-400 font-bold">/ {items.length}</span>
+                        </div>
+                        <button onClick={goToNext} disabled={currentIndex === items.length - 1} className={`p-2 rounded-lg ${currentIndex === items.length - 1 ? 'text-gray-200' : 'text-blue-600 bg-blue-50 active:bg-blue-100'}`}>
+                            <ChevronRight size={24} />
+                        </button>
                     </div>
 
-                    {confirmDialog.isOpen && (
-                        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-                            <div className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden">
-                                <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-                                    <h3 className="font-bold text-gray-800">確認</h3>
-                                    <button onClick={closeDialog} className="text-gray-400 hover:text-gray-600 p-1"><X size={18} /></button>
+                    {/* メインカード（余白を削って1画面に収める） */}
+                    <div className={`p-3 rounded-2xl border-2 shadow-md ${isLocked ? 'bg-gray-100 border-gray-300 opacity-90' : 'bg-white border-blue-200'}`}>
+                        
+                        {/* 滞在時間 ＆ 修正 */}
+                        <div className="flex justify-between items-center mb-3">
+                            <span className={`text-base font-bold px-3 py-1.5 rounded-lg border ${item.duration ? 'text-gray-800 bg-yellow-100 border-yellow-400' : 'text-gray-400 border-gray-200'}`}>
+                                滞在: {item.duration || '--分'}
+                            </span>
+                            <button 
+                                onClick={() => setEditModeId(isEditing ? null : item.id)}
+                                disabled={isLocked}
+                                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-bold border transition-colors ${isEditing ? 'bg-indigo-600 text-white border-indigo-700' : 'bg-gray-100 text-gray-700 border-gray-300'} ${isLocked ? 'opacity-50' : ''}`}
+                            >
+                                {isEditing ? <Check size={16} /> : <Edit2 size={16} />}
+                                {isEditing ? '完了' : '修正'}
+                            </button>
+                        </div>
+                        
+                        {/* 到着・出発（高さを控えめに） */}
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                            {isEditing ? (
+                                <div className="flex flex-col gap-1">
+                                    <label className="text-xs font-bold text-gray-600 text-center">到着時間を修正</label>
+                                    <input type="time" value={item.arrival || ""} onChange={(e) => handleTimeChange(item.id, 'arrival', e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded-xl text-xl font-bold text-center text-gray-800 bg-gray-50 outline-none" />
                                 </div>
-                                <div className="p-6 text-gray-600 text-sm">{confirmDialog.message}</div>
-                                <div className="p-4 bg-gray-50 flex justify-end gap-2 border-t border-gray-100">
-                                    <button onClick={closeDialog} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-200">キャンセル</button>
-                                    <button onClick={confirmDialog.onConfirm} className="px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700">はい</button>
+                            ) : (
+                                <button disabled={isLocked} onClick={() => recordAction(item.id, 'arrival')} className={`py-3 rounded-xl text-lg font-extrabold shadow-sm active:scale-95 transition-all ${item.arrival ? 'bg-green-600 text-white border-green-700 shadow-inner' : 'bg-white text-green-600 border-green-400 border-2'} ${isLocked ? 'opacity-50' : ''}`}>
+                                    到着<br/><span className="text-xl">{item.arrival ? item.arrival.slice(0, 5) : '--:--'}</span>
+                                </button>
+                            )}
+
+                            {isEditing ? (
+                                <div className="flex flex-col gap-1">
+                                    <label className="text-xs font-bold text-gray-600 text-center">出発時間を修正</label>
+                                    <input type="time" value={item.departure || ""} onChange={(e) => handleTimeChange(item.id, 'departure', e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded-xl text-xl font-bold text-center text-gray-800 bg-gray-50 outline-none" />
+                                </div>
+                            ) : (
+                                <button disabled={isLocked} onClick={() => recordAction(item.id, 'departure')} className={`py-3 rounded-xl text-lg font-extrabold shadow-sm active:scale-95 transition-all ${item.departure ? 'bg-blue-600 text-white border-blue-700 shadow-inner' : 'bg-white text-blue-600 border-blue-400 border-2'} ${isLocked ? 'opacity-50' : ''}`}>
+                                    出発<br/><span className="text-xl">{item.departure ? item.departure.slice(0, 5) : '--:--'}</span>
+                                </button>
+                            )}
+                        </div>
+
+                        {/* 商品選択ボタン（スッキリ化） */}
+                        <div className="mb-3 bg-gray-50 p-2 rounded-xl border border-gray-200">
+                            <label className="block text-xs font-bold text-gray-600 mb-1.5 text-center">納品商品 (タップで選択)</label>
+                            <div className="flex gap-2">
+                                <button disabled={isLocked} onClick={() => toggleProduct(item.id, 'green')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.green ? 'bg-green-500 text-white border-green-600 shadow-inner' : 'bg-white text-green-600 border-green-300'} ${isLocked ? 'opacity-50' : ''}`}>緑</button>
+                                <button disabled={isLocked} onClick={() => toggleProduct(item.id, 'blue')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.blue ? 'bg-blue-500 text-white border-blue-600 shadow-inner' : 'bg-white text-blue-600 border-blue-300'} ${isLocked ? 'opacity-50' : ''}`}>青</button>
+                                <button disabled={isLocked} onClick={() => toggleProduct(item.id, 'gray')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.gray ? 'bg-gray-500 text-white border-gray-600 shadow-inner' : 'bg-white text-gray-600 border-gray-300'} ${isLocked ? 'opacity-50' : ''}`}>グレー</button>
+                            </div>
+                        </div>
+
+                        {/* Del/Pic 枠 */}
+                        <div className="flex items-center gap-2 mb-3 bg-gray-50 p-2 rounded-xl border border-gray-200">
+                            <span className="text-sm font-bold text-gray-600 w-12 text-center leading-tight">Del/Pic</span>
+                            <div className="flex flex-1 items-center bg-white rounded-lg border border-gray-300 overflow-hidden shadow-inner h-12">
+                                <input id={`del-input-${item.id}`} type="number" value={item.del} onChange={(e) => handleTextChange(item.id, 'del', e.target.value)} disabled={isLocked} className="w-full p-2 text-center text-xl font-bold text-gray-800 outline-none" placeholder="納品" />
+                                <span className="bg-gray-200 h-full w-px"></span>
+                                <input type="number" value={item.pic} onChange={(e) => handleTextChange(item.id, 'pic', e.target.value)} disabled={isLocked} className="w-full p-2 text-center text-xl font-bold text-gray-800 outline-none" placeholder="回収" />
+                            </div>
+                            <button onClick={() => startVoiceInput(item.id)} disabled={isLocked || recordingId === `num-${item.id}`} className={`w-12 h-12 rounded-lg flex items-center justify-center border shadow-sm ${recordingId === `num-${item.id}` ? 'bg-red-500 border-red-600 text-white animate-pulse' : 'bg-gray-200 border-gray-300 text-gray-700'} ${isLocked ? 'opacity-50' : ''}`}>
+                                <Mic size={20} />
+                            </button>
+                        </div>
+
+                        {/* Memo 枠 */}
+                        <div className="flex items-center gap-2 mb-2 bg-gray-50 p-2 rounded-xl border border-gray-200">
+                            <span className="text-sm font-bold text-gray-600 w-12 text-center">Memo</span>
+                            <div className="flex flex-1 bg-white rounded-lg border border-gray-300 shadow-inner h-12">
+                                <input type="text" value={item.memo} onChange={(e) => handleTextChange(item.id, 'memo', e.target.value)} disabled={isLocked} className="w-full p-2 text-lg font-bold text-gray-800 outline-none rounded-lg" placeholder="記号・英数字" />
+                            </div>
+                            <button onClick={() => startMemoVoiceInput(item.id)} disabled={isLocked || recordingId === `memo-${item.id}`} className={`w-12 h-12 rounded-lg flex items-center justify-center border shadow-sm ${recordingId === `memo-${item.id}` ? 'bg-red-500 border-red-600 text-white animate-pulse' : 'bg-gray-200 border-gray-300 text-gray-700'} ${isLocked ? 'opacity-50' : ''}`}>
+                                <Mic size={20} />
+                            </button>
+                        </div>
+                        
+                        {/* 位置情報 */}
+                        <div className="h-5 flex items-center justify-end">
+                            {item.mapUrl ? (
+                                <a href={item.mapUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-blue-600 truncate flex items-center gap-1 hover:underline">
+                                    <ExternalLink size={12} /> マップで開く ({item.location})
+                                </a>
+                            ) : item.location ? (
+                                <div className="text-xs font-bold text-gray-500 truncate flex items-center gap-1"><MapPin size={12} /> {item.location}</div>
+                            ) : null}
+                        </div>
+                    </div>
+
+                    {/* 次へ進むボタン（高さを少し抑える） */}
+                    {currentIndex < items.length - 1 && (
+                        <button 
+                            onClick={goToNext} 
+                            disabled={isLocked}
+                            className={`mt-3 py-4 w-full rounded-xl text-xl font-bold shadow-md flex items-center justify-center gap-2 active:scale-95 ${isLocked ? 'hidden' : 'bg-indigo-600 text-white hover:bg-indigo-500'}`}
+                        >
+                            <span>✅ 完了して次へ (No. {item.id + 1})</span>
+                            <ChevronRight size={24} />
+                        </button>
+                    )}
+
+                    {confirmDialog.isOpen && (
+                        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+                            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden border">
+                                <div className="p-4 text-lg font-bold text-gray-800 border-b text-center">確認</div>
+                                <div className="p-6 text-gray-700 text-base text-center font-bold">{confirmDialog.message}</div>
+                                <div className="p-4 bg-gray-50 flex justify-center gap-3">
+                                    <button onClick={closeDialog} className="px-5 py-3 rounded-lg font-bold text-gray-700 bg-gray-200 hover:bg-gray-300">キャンセル</button>
+                                    <button onClick={confirmDialog.onConfirm} className="px-5 py-3 rounded-lg font-bold bg-blue-600 text-white hover:bg-blue-700">はい</button>
                                 </div>
                             </div>
                         </div>
