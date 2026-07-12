@@ -50,13 +50,11 @@
             const [editModeId, setEditModeId] = useState(null);
             const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, message: "", onConfirm: null });
 
-            // ★トップページ表示用フラグ
             const [showBase, setShowBase] = useState(() => {
                 const saved = localStorage.getItem('appShowBase');
                 return saved !== null ? saved === 'true' : true;
             });
 
-            // ★拠点（全体管理）データ
             const [baseInfo, setBaseInfo] = useState(() => {
                 const saved = localStorage.getItem('appBaseInfo');
                 return saved ? JSON.parse(saved) : { targetCount: 10, departure: null, returnTime: null, isConfirmed: false };
@@ -72,12 +70,40 @@
                 return savedGroupId && savedGroupId !== 'null' ? parseInt(savedGroupId, 10) : null;
             });
 
-            // --- 初期化 ---
+            // ★改良1：時間を「必ず 00:00 形式の5文字」で取得する専用機能
+            const getTimeString = () => {
+                const now = new Date();
+                const h = now.getHours().toString().padStart(2, '0');
+                const m = now.getMinutes().toString().padStart(2, '0');
+                return `${h}:${m}`;
+            };
+
+            // --- 初期化＆データ修復 ---
             useEffect(() => {
                 const savedData = localStorage.getItem('countAppData');
                 const savedLock = localStorage.getItem('isLocked');
+                
                 if (savedData) {
-                    setItems(JSON.parse(savedData));
+                    try {
+                        let parsed = JSON.parse(savedData);
+                        // ★改良2：過去のバグったデータを自動で綺麗に直す（修復処理）
+                        parsed = parsed.map(item => ({
+                            ...item,
+                            product: item.product || { green: false, blue: false, gray: false },
+                            facilityGroupId: item.facilityGroupId || null,
+                            // undefinedという文字列が入っていたら強制的にnullに戻す
+                            pauseStart: (item.pauseStart === "undefined" || item.pauseStart === undefined) ? null : item.pauseStart,
+                            // 7:30: などのゴミが入っていたらキレイにする
+                            arrival: item.arrival ? item.arrival.replace(':', ':').substring(0, 5) : null,
+                            departure: item.departure ? item.departure.replace(':', ':').substring(0, 5) : null
+                        }));
+                        setItems(parsed);
+                        // 念のためローカルストレージも修復版で上書き
+                        localStorage.setItem('countAppData', JSON.stringify(parsed));
+                    } catch(e) {
+                        // 万が一データが壊れすぎていたら初期化
+                        console.error(e);
+                    }
                     setIsLocked(savedLock === 'true');
                 } else {
                     const initialItems = Array.from({ length: 40 }, (_, i) => ({
@@ -85,7 +111,7 @@
                         del: "", pic: "", memo: "", location: null, mapUrl: null,
                         product: { green: false, blue: false, gray: false },
                         facilityGroupId: null,
-                        pauseStart: null // ★休憩開始時間の保存用
+                        pauseStart: null 
                     }));
                     setItems(initialItems);
                 }
@@ -101,7 +127,7 @@
             };
 
             const recordBaseTime = (field) => {
-                const timeString = new Date().toLocaleTimeString('ja-JP', { hour12: false }).slice(0, 5);
+                const timeString = getTimeString();
                 updateBaseInfo(field, timeString);
                 showStatus(field === 'departure' ? "拠点出発を記録しました" : "帰社時間を記録しました");
             };
@@ -124,21 +150,17 @@
 
             // --- 休憩ロック機能の処理 ---
             const togglePause = (id) => {
-                if (isLocked) return;
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('ja-JP', { hour12: false }).slice(0, 5); // "HH:MM"
+                const timeString = getTimeString();
 
                 setItems(prev => {
                     const newItems = prev.map(item => {
                         if (item.id === id) {
                             if (item.pauseStart) {
-                                // 休憩【終了】処理
                                 const pauseMemo = `[休憩 ${item.pauseStart}-${timeString}]`;
                                 const newMemo = item.memo ? `${item.memo} ${pauseMemo}` : pauseMemo;
                                 showStatus("休憩終了！メモに追記しました");
                                 return { ...item, pauseStart: null, memo: newMemo };
                             } else {
-                                // 休憩【開始】処理
                                 showStatus("休憩中…画面をロックしました");
                                 return { ...item, pauseStart: timeString };
                             }
@@ -150,7 +172,6 @@
                 });
             };
 
-            // --- 既存の処理 ---
             const handleTextChange = (id, field, value) => {
                 if (field === 'memo') { value = value.replace(/[^\x20-\x7E]/g, ''); }
                 setItems(prev => {
@@ -168,9 +189,13 @@
                         if (item.id === id || (groupId && item.facilityGroupId === groupId)) {
                             let updatedItem = { ...item };
                             if (field === 'arrival' || field === 'departure') { updatedItem[field] = value; }
+                            
                             if (updatedItem.arrival && updatedItem.departure) {
-                                const [h1, m1] = updatedItem.arrival.split(':').map(Number);
-                                const [h2, m2] = updatedItem.departure.split(':').map(Number);
+                                // 時間計算のバグ防止
+                                const h1 = parseInt(updatedItem.arrival.split(':')[0], 10) || 0;
+                                const m1 = parseInt(updatedItem.arrival.split(':')[1], 10) || 0;
+                                const h2 = parseInt(updatedItem.departure.split(':')[0], 10) || 0;
+                                const m2 = parseInt(updatedItem.departure.split(':')[1], 10) || 0;
                                 const diff = (h2 * 60 + m2) - (h1 * 60 + m1);
                                 updatedItem.duration = diff >= 0 ? `${diff}分` : 'エラー';
                             } else { updatedItem.duration = null; }
@@ -184,7 +209,10 @@
             };
 
             const toggleFacilityMode = () => {
-                if (isLocked) return;
+                if (isLocked) {
+                    showStatus("全体ロック中は変更できません");
+                    return;
+                }
                 if (facilityGroupId === null) {
                     const currentItem = items[currentIndex];
                     if (!currentItem.arrival) { showStatus("先に到着時間を記録してください"); return; }
@@ -220,7 +248,8 @@
 
             const recordAction = (id, type) => {
                 if (isLocked) return;
-                const timeString = new Date().toLocaleTimeString('ja-JP', { hour12: false }).slice(0, 5);
+                const timeString = getTimeString();
+                
                 setItems(prevItems => {
                     const currentItem = prevItems.find(i => i.id === id);
                     const targetGroupId = currentItem ? currentItem.facilityGroupId : null;
@@ -230,8 +259,10 @@
                             const arrivalTime = type === 'arrival' ? timeString : item.arrival;
                             const departureTime = type === 'departure' ? timeString : item.departure;
                             if (arrivalTime && departureTime) {
-                                const [h1, m1] = arrivalTime.split(':').map(Number);
-                                const [h2, m2] = departureTime.split(':').map(Number);
+                                const h1 = parseInt(arrivalTime.split(':')[0], 10) || 0;
+                                const m1 = parseInt(arrivalTime.split(':')[1], 10) || 0;
+                                const h2 = parseInt(departureTime.split(':')[0], 10) || 0;
+                                const m2 = parseInt(departureTime.split(':')[1], 10) || 0;
                                 const diff = (h2 * 60 + m2) - (h1 * 60 + m1);
                                 updatedItem.duration = diff >= 0 ? `${diff}分` : 'エラー';
                             }
@@ -315,7 +346,6 @@
                 const recordedItems = items.filter(item => item.arrival || item.departure || item.del || item.pic || item.memo || (item.product && (item.product.green || item.product.blue || item.product.gray)));
                 if (recordedItems.length === 0 && !baseInfo.departure && !baseInfo.returnTime) { showStatus("書き出すデータがありません"); return; }
                 
-                // ★CSVの先頭に拠点情報を追加
                 const baseHeader = `=== 拠点情報 ===\n拠点出発時間,拠点帰社時間,予定件数\n${baseInfo.departure || '--:--'},${baseInfo.returnTime || '--:--'},${baseInfo.targetCount || 0}件\n\n`;
                 const itemHeader = "=== 納品データ ===\nNo,到着時間,出発時間,滞在時間,納品商品,納品数(Del),回収数(Pic),メモ,位置情報,GoogleMap URL\n";
                 
@@ -367,7 +397,6 @@
                 setFacilityGroupId(null);
                 setItems(initialItems);
                 
-                // 拠点情報もリセットしてトップページに戻す
                 setBaseInfo({ targetCount: 10, departure: null, returnTime: null, isConfirmed: false });
                 setShowBase(true);
                 
@@ -424,7 +453,9 @@
             const isEditing = editModeId === item.id;
             const prod = item.product || { green: false, blue: false, gray: false };
             const isFacilityModeActive = facilityGroupId !== null;
-            const isPaused = item.pauseStart !== null; // ★休憩中フラグ
+            
+            // ★改良3：本当に休憩中かどうかを正しく判定する
+            const isPaused = !!item.pauseStart && item.pauseStart !== "undefined"; 
 
             return (
                 <div className="min-h-screen p-2 font-sans relative max-w-lg mx-auto pb-4">
@@ -436,9 +467,7 @@
                         </h1>
                         <div className="flex gap-2">
                             <button onClick={exportData} className="p-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300"><Download size={20} /></button>
-                            {!showBase && (
-                                <button onClick={() => setConfirmDialog({ isOpen: true, message: isLocked ? '入力を再開しますか？' : 'ロックしますか？', onConfirm: () => { setIsLocked(!isLocked); localStorage.setItem('isLocked', !isLocked); closeDialog(); }})} className={`p-2 rounded-lg ${isLocked ? 'bg-red-100 text-red-600 border border-red-300' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}><Lock size={20} /></button>
-                            )}
+                            <button onClick={() => setConfirmDialog({ isOpen: true, message: isLocked ? '入力を再開しますか？' : '画面全体をロックしますか？', onConfirm: () => { setIsLocked(!isLocked); localStorage.setItem('isLocked', !isLocked); closeDialog(); }})} className={`p-2 rounded-lg ${isLocked ? 'bg-red-100 text-red-600 border border-red-300' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}><Lock size={20} /></button>
                             <button onClick={() => setConfirmDialog({ isOpen: true, message: 'すべての記録と拠点設定をリセットしますか？', onConfirm: resetApp })} className="p-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300"><RotateCcw size={20} /></button>
                         </div>
                     </header>
@@ -450,9 +479,8 @@
                     )}
 
                     {showBase ? (
-                        /* ================= トップページ（拠点管理） ================= */
-                        <div className="bg-white p-5 rounded-2xl shadow-md border-2 border-indigo-200 flex flex-col gap-6">
-                            
+                        /* ================= トップページ ================= */
+                        <div className={`bg-white p-5 rounded-2xl shadow-md border-2 border-indigo-200 flex flex-col gap-6 transition-opacity ${isLocked ? 'opacity-50 pointer-events-none' : ''}`}>
                             <div className="flex flex-col gap-2">
                                 <label className="font-bold text-gray-700 text-center">本日の予定件数</label>
                                 <div className="flex gap-2">
@@ -470,7 +498,6 @@
                                         {baseInfo.isConfirmed ? '変更' : '確定'}
                                     </button>
                                 </div>
-                                <p className="text-xs text-gray-500 text-center">※確定すると指定した件数以降のページがロックされます</p>
                             </div>
 
                             <div className="border-t border-gray-200 pt-6 grid grid-cols-2 gap-4">
@@ -502,7 +529,6 @@
                     ) : (
                         /* ================= アイテムページ ================= */
                         <div className="flex flex-col gap-2">
-                            {/* ナビゲーション ＆ 同施設モードトグル */}
                             <div className="flex flex-col gap-2 bg-white p-2 rounded-xl shadow-sm border border-gray-200">
                                 <div className="flex justify-between items-center">
                                     <button onClick={() => currentIndex === 0 ? goToTopPage() : goToPrev()} className="p-2 rounded-lg text-blue-600 bg-blue-50 active:bg-blue-100">
@@ -528,24 +554,21 @@
                                 </div>
                             </div>
 
-                            <div key={item.id} className={`p-3 rounded-2xl border-2 shadow-md transition-all ${isLocked ? 'bg-gray-100 border-gray-300 opacity-90' : isFacilityModeActive ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-blue-200'}`}>
+                            <div key={item.id} className={`p-3 rounded-2xl border-2 shadow-md transition-all ${isLocked ? 'bg-gray-100 border-gray-300' : isFacilityModeActive ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-blue-200'}`}>
                                 
-                                {/* ★新機能：休憩ボタン（ロック処理の対象外として一番上に配置） */}
                                 <div className="mb-4">
                                     <button 
                                         onClick={() => togglePause(item.id)}
-                                        disabled={isLocked}
                                         className={`w-full py-4 rounded-xl text-lg font-extrabold border-2 shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95
                                             ${isPaused ? 'bg-orange-500 text-white border-orange-600 shadow-inner animate-pulse' : 'bg-white text-orange-600 border-orange-300'}
-                                            ${isLocked ? 'opacity-50' : ''}`}
+                                            ${isLocked ? 'opacity-80' : ''}`}
                                     >
                                         <Coffee size={24} />
                                         {isPaused ? `休憩を終了する (開始: ${item.pauseStart})` : '☕ 休憩を開始する'}
                                     </button>
                                 </div>
 
-                                {/* ★休憩中は以下の要素を薄くしてタッチ無効にする */}
-                                <div className={`transition-all duration-300 ${isPaused ? 'opacity-40 pointer-events-none grayscale' : ''}`}>
+                                <div className={`transition-all duration-300 ${isPaused || isLocked ? 'opacity-40 pointer-events-none grayscale' : ''}`}>
                                     
                                     <div className="flex justify-between items-center mb-3">
                                         <span className={`text-base font-bold px-3 py-1.5 rounded-lg border ${item.duration ? 'text-gray-800 bg-yellow-100 border-yellow-400' : 'text-gray-400 border-gray-200 bg-white'}`}>
@@ -553,8 +576,7 @@
                                         </span>
                                         <button 
                                             onClick={() => setEditModeId(isEditing ? null : item.id)}
-                                            disabled={isLocked || isFacilityModeActive}
-                                            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-bold border transition-colors ${isEditing ? 'bg-indigo-600 text-white border-indigo-700' : 'bg-white text-gray-700 border-gray-300'} ${isLocked || isFacilityModeActive ? 'opacity-50' : ''}`}
+                                            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-bold border transition-colors ${isEditing ? 'bg-indigo-600 text-white border-indigo-700' : 'bg-white text-gray-700 border-gray-300'}`}
                                         >
                                             {isEditing ? <Check size={16} /> : <Edit2 size={16} />}
                                             {isEditing ? '完了' : '修正'}
@@ -569,17 +591,21 @@
                                             </div>
                                         ) : (
                                             <button 
-                                                disabled={isLocked || isFacilityModeActive || (item.facilityGroupId && item.facilityGroupId !== item.id)} 
-                                                onClick={() => recordAction(item.id, 'arrival')} 
+                                                onClick={() => {
+                                                    if (item.facilityGroupId && item.facilityGroupId !== item.id) {
+                                                        showStatus("🏢 連動中のため到着時間は自動入力されています");
+                                                    } else {
+                                                        recordAction(item.id, 'arrival');
+                                                    }
+                                                }} 
                                                 className={`py-3 rounded-xl text-lg font-extrabold shadow-sm active:scale-95 transition-all 
                                                     ${item.facilityGroupId && item.facilityGroupId !== item.id ? 'bg-gray-100 text-gray-400 border-gray-300 border-2' : 
-                                                    item.arrival ? 'bg-green-600 text-white border-green-700 shadow-inner' : 'bg-white text-green-600 border-green-400 border-2'} 
-                                                    ${isLocked || isFacilityModeActive ? 'opacity-70' : ''}`}
+                                                    item.arrival ? 'bg-green-600 text-white border-green-700 shadow-inner' : 'bg-white text-green-600 border-green-400 border-2'}`}
                                             >
                                                 {item.facilityGroupId && item.facilityGroupId !== item.id ? (
-                                                    <>到着<br/><span className="text-xl">{item.arrival ? item.arrival.slice(0, 5) : '--:--'}</span><div className="text-[10px] font-normal leading-tight mt-1">連動中</div></>
+                                                    <>到着<br/><span className="text-xl">{item.arrival || '--:--'}</span><div className="text-[10px] font-normal leading-tight mt-1">連動中</div></>
                                                 ) : (
-                                                    <>到着<br/><span className="text-xl">{item.arrival ? item.arrival.slice(0, 5) : '--:--'}</span></>
+                                                    <>到着<br/><span className="text-xl">{item.arrival || '--:--'}</span></>
                                                 )}
                                             </button>
                                         )}
@@ -591,17 +617,21 @@
                                             </div>
                                         ) : (
                                             <button 
-                                                disabled={isLocked || isFacilityModeActive} 
-                                                onClick={() => recordAction(item.id, 'departure')} 
+                                                onClick={() => {
+                                                    if (isFacilityModeActive) {
+                                                        showStatus("🏢 出発を記録するには、同施設モードをOFFにしてください");
+                                                    } else {
+                                                        recordAction(item.id, 'departure');
+                                                    }
+                                                }} 
                                                 className={`py-3 rounded-xl text-lg font-extrabold shadow-sm active:scale-95 transition-all 
                                                     ${isFacilityModeActive ? 'bg-indigo-100 text-indigo-500 border-indigo-300 border-2' : 
-                                                    item.departure ? 'bg-blue-600 text-white border-blue-700 shadow-inner' : 'bg-white text-blue-600 border-blue-400 border-2'} 
-                                                    ${isLocked ? 'opacity-50' : ''}`}
+                                                    item.departure ? 'bg-blue-600 text-white border-blue-700 shadow-inner' : 'bg-white text-blue-600 border-blue-400 border-2'}`}
                                             >
                                                 {isFacilityModeActive ? (
                                                     <div className="flex flex-col h-full justify-center text-sm px-2">モードOFFで<br/>出発を入力</div>
                                                 ) : (
-                                                    <>出発<br/><span className="text-xl">{item.departure ? item.departure.slice(0, 5) : '--:--'}</span></>
+                                                    <>出発<br/><span className="text-xl">{item.departure || '--:--'}</span></>
                                                 )}
                                             </button>
                                         )}
@@ -610,20 +640,20 @@
                                     <div className="mb-3 bg-white p-2 rounded-xl border border-gray-200">
                                         <label className="block text-xs font-bold text-gray-600 mb-1.5 text-center">納品商品 (タップで選択)</label>
                                         <div className="flex gap-2">
-                                            <button disabled={isLocked} onClick={() => toggleProduct(item.id, 'green')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.green ? 'bg-green-500 text-white border-green-600 shadow-inner' : 'bg-white text-green-600 border-green-300'} ${isLocked ? 'opacity-50' : ''}`}>緑</button>
-                                            <button disabled={isLocked} onClick={() => toggleProduct(item.id, 'blue')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.blue ? 'bg-blue-500 text-white border-blue-600 shadow-inner' : 'bg-white text-blue-600 border-blue-300'} ${isLocked ? 'opacity-50' : ''}`}>青</button>
-                                            <button disabled={isLocked} onClick={() => toggleProduct(item.id, 'gray')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.gray ? 'bg-gray-500 text-white border-gray-600 shadow-inner' : 'bg-white text-gray-600 border-gray-300'} ${isLocked ? 'opacity-50' : ''}`}>グレー</button>
+                                            <button onClick={() => toggleProduct(item.id, 'green')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.green ? 'bg-green-500 text-white border-green-600 shadow-inner' : 'bg-white text-green-600 border-green-300'}`}>緑</button>
+                                            <button onClick={() => toggleProduct(item.id, 'blue')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.blue ? 'bg-blue-500 text-white border-blue-600 shadow-inner' : 'bg-white text-blue-600 border-blue-300'}`}>青</button>
+                                            <button onClick={() => toggleProduct(item.id, 'gray')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.gray ? 'bg-gray-500 text-white border-gray-600 shadow-inner' : 'bg-white text-gray-600 border-gray-300'}`}>グレー</button>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center gap-2 mb-3 bg-white p-2 rounded-xl border border-gray-200">
                                         <span className="text-sm font-bold text-gray-600 w-12 text-center leading-tight">Del/Pic</span>
                                         <div className="flex flex-1 items-center bg-white rounded-lg border border-gray-300 overflow-hidden shadow-inner h-12">
-                                            <input id={`del-input-${item.id}`} type="number" value={item.del} onChange={(e) => handleTextChange(item.id, 'del', e.target.value)} disabled={isLocked} className="w-full p-2 text-center text-xl font-bold text-gray-800 outline-none" placeholder="納品" />
+                                            <input id={`del-input-${item.id}`} type="number" value={item.del} onChange={(e) => handleTextChange(item.id, 'del', e.target.value)} className="w-full p-2 text-center text-xl font-bold text-gray-800 outline-none" placeholder="納品" />
                                             <span className="bg-gray-200 h-full w-px"></span>
-                                            <input type="number" value={item.pic} onChange={(e) => handleTextChange(item.id, 'pic', e.target.value)} disabled={isLocked} className="w-full p-2 text-center text-xl font-bold text-gray-800 outline-none" placeholder="回収" />
+                                            <input type="number" value={item.pic} onChange={(e) => handleTextChange(item.id, 'pic', e.target.value)} className="w-full p-2 text-center text-xl font-bold text-gray-800 outline-none" placeholder="回収" />
                                         </div>
-                                        <button onClick={() => startVoiceInput(item.id)} disabled={isLocked || recordingId === `num-${item.id}`} className={`w-12 h-12 rounded-lg flex items-center justify-center border shadow-sm ${recordingId === `num-${item.id}` ? 'bg-red-500 border-red-600 text-white animate-pulse' : 'bg-gray-100 border-gray-300 text-gray-700'} ${isLocked ? 'opacity-50' : ''}`}>
+                                        <button onClick={() => startVoiceInput(item.id)} disabled={recordingId === `num-${item.id}`} className={`w-12 h-12 rounded-lg flex items-center justify-center border shadow-sm ${recordingId === `num-${item.id}` ? 'bg-red-500 border-red-600 text-white animate-pulse' : 'bg-gray-100 border-gray-300 text-gray-700'}`}>
                                             <Mic size={20} />
                                         </button>
                                     </div>
@@ -635,12 +665,11 @@
                                                 type="text" inputMode="email"
                                                 value={item.memo} 
                                                 onChange={(e) => handleTextChange(item.id, 'memo', e.target.value)} 
-                                                disabled={isLocked} 
                                                 className="w-full p-2 text-lg font-bold text-gray-800 outline-none rounded-lg" 
                                                 placeholder="英数字・記号" 
                                             />
                                         </div>
-                                        <button onClick={() => startMemoVoiceInput(item.id)} disabled={isLocked || recordingId === `memo-${item.id}`} className={`w-12 h-12 rounded-lg flex items-center justify-center border shadow-sm ${recordingId === `memo-${item.id}` ? 'bg-red-500 border-red-600 text-white animate-pulse' : 'bg-gray-100 border-gray-300 text-gray-700'} ${isLocked ? 'opacity-50' : ''}`}>
+                                        <button onClick={() => startMemoVoiceInput(item.id)} disabled={recordingId === `memo-${item.id}`} className={`w-12 h-12 rounded-lg flex items-center justify-center border shadow-sm ${recordingId === `memo-${item.id}` ? 'bg-red-500 border-red-600 text-white animate-pulse' : 'bg-gray-100 border-gray-300 text-gray-700'}`}>
                                             <Mic size={20} />
                                         </button>
                                     </div>
@@ -658,7 +687,6 @@
                                 </div>
                             </div>
 
-                            {/* 次へ進む / トップへ戻る ボタン */}
                             {!isPaused && (
                                 currentIndex < baseInfo.targetCount - 1 ? (
                                     <button 
