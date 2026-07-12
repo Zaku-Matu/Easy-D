@@ -31,7 +31,6 @@
         const MapPin = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>;
         const Lock = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>;
         const RotateCcw = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>;
-        const X = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
         const ExternalLink = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>;
         const Download = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>;
         const Mic = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>;
@@ -39,8 +38,11 @@
         const ChevronRight = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m9 18 6-6-6-6"/></svg>;
         const Edit2 = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>;
         const Check = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M20 6 9 17l-5-5"/></svg>;
+        const Building = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10h.01"></path><path d="M16 14h.01"></path><path d="M8 10h.01"></path><path d="M8 14h.01"></path></svg>;
+        const Coffee = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>;
 
         function App() {
+            // --- ステート管理 ---
             const [items, setItems] = useState([]);
             const [isLocked, setIsLocked] = useState(false);
             const [statusMsg, setStatusMsg] = useState("");
@@ -48,17 +50,29 @@
             const [editModeId, setEditModeId] = useState(null);
             const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, message: "", onConfirm: null });
 
+            // ★トップページ表示用フラグ
+            const [showBase, setShowBase] = useState(() => {
+                const saved = localStorage.getItem('appShowBase');
+                return saved !== null ? saved === 'true' : true;
+            });
+
+            // ★拠点（全体管理）データ
+            const [baseInfo, setBaseInfo] = useState(() => {
+                const saved = localStorage.getItem('appBaseInfo');
+                return saved ? JSON.parse(saved) : { targetCount: 10, departure: null, returnTime: null, isConfirmed: false };
+            });
+
             const [currentIndex, setCurrentIndex] = useState(() => {
                 const savedIndex = localStorage.getItem('appCurrentIndex');
                 return savedIndex !== null ? parseInt(savedIndex, 10) : 0;
             });
 
-            // ★新設：同施設モードの状態（親となるアイテムのIDを保存。nullならOFF）
             const [facilityGroupId, setFacilityGroupId] = useState(() => {
                 const savedGroupId = localStorage.getItem('appFacilityGroupId');
                 return savedGroupId && savedGroupId !== 'null' ? parseInt(savedGroupId, 10) : null;
             });
 
+            // --- 初期化 ---
             useEffect(() => {
                 const savedData = localStorage.getItem('countAppData');
                 const savedLock = localStorage.getItem('isLocked');
@@ -70,16 +84,75 @@
                         id: i + 1, arrival: null, departure: null, duration: null,
                         del: "", pic: "", memo: "", location: null, mapUrl: null,
                         product: { green: false, blue: false, gray: false },
-                        facilityGroupId: null // ★新設：どのグループに属しているか
+                        facilityGroupId: null,
+                        pauseStart: null // ★休憩開始時間の保存用
                     }));
                     setItems(initialItems);
                 }
             }, []);
 
-            const handleTextChange = (id, field, value) => {
-                if (field === 'memo') {
-                    value = value.replace(/[^\x20-\x7E]/g, ''); // 半角英数字・記号のみ
+            // --- 拠点情報・画面切り替えの処理 ---
+            const updateBaseInfo = (field, value) => {
+                setBaseInfo(prev => {
+                    const next = { ...prev, [field]: value };
+                    localStorage.setItem('appBaseInfo', JSON.stringify(next));
+                    return next;
+                });
+            };
+
+            const recordBaseTime = (field) => {
+                const timeString = new Date().toLocaleTimeString('ja-JP', { hour12: false }).slice(0, 5);
+                updateBaseInfo(field, timeString);
+                showStatus(field === 'departure' ? "拠点出発を記録しました" : "帰社時間を記録しました");
+            };
+
+            const goToTopPage = () => {
+                setShowBase(true);
+                localStorage.setItem('appShowBase', 'true');
+                window.scrollTo(0, 0);
+            };
+
+            const startWork = () => {
+                if (!baseInfo.isConfirmed) {
+                    showStatus("予定件数を確定してください");
+                    return;
                 }
+                setShowBase(false);
+                localStorage.setItem('appShowBase', 'false');
+                window.scrollTo(0, 0);
+            };
+
+            // --- 休憩ロック機能の処理 ---
+            const togglePause = (id) => {
+                if (isLocked) return;
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('ja-JP', { hour12: false }).slice(0, 5); // "HH:MM"
+
+                setItems(prev => {
+                    const newItems = prev.map(item => {
+                        if (item.id === id) {
+                            if (item.pauseStart) {
+                                // 休憩【終了】処理
+                                const pauseMemo = `[休憩 ${item.pauseStart}-${timeString}]`;
+                                const newMemo = item.memo ? `${item.memo} ${pauseMemo}` : pauseMemo;
+                                showStatus("休憩終了！メモに追記しました");
+                                return { ...item, pauseStart: null, memo: newMemo };
+                            } else {
+                                // 休憩【開始】処理
+                                showStatus("休憩中…画面をロックしました");
+                                return { ...item, pauseStart: timeString };
+                            }
+                        }
+                        return item;
+                    });
+                    localStorage.setItem('countAppData', JSON.stringify(newItems));
+                    return newItems;
+                });
+            };
+
+            // --- 既存の処理 ---
+            const handleTextChange = (id, field, value) => {
+                if (field === 'memo') { value = value.replace(/[^\x20-\x7E]/g, ''); }
                 setItems(prev => {
                     const newItems = prev.map(item => item.id === id ? { ...item, [field]: value } : item);
                     localStorage.setItem('countAppData', JSON.stringify(newItems));
@@ -91,22 +164,16 @@
                 setItems(prev => {
                     const targetItem = prev.find(i => i.id === id);
                     const groupId = targetItem ? targetItem.facilityGroupId : null;
-
                     const newItems = prev.map(item => {
-                        // 修正対象、または同じ同施設グループのものを一斉に更新
                         if (item.id === id || (groupId && item.facilityGroupId === groupId)) {
                             let updatedItem = { ...item };
-                            if (field === 'arrival' || field === 'departure') {
-                                updatedItem[field] = value;
-                            }
+                            if (field === 'arrival' || field === 'departure') { updatedItem[field] = value; }
                             if (updatedItem.arrival && updatedItem.departure) {
                                 const [h1, m1] = updatedItem.arrival.split(':').map(Number);
                                 const [h2, m2] = updatedItem.departure.split(':').map(Number);
                                 const diff = (h2 * 60 + m2) - (h1 * 60 + m1);
                                 updatedItem.duration = diff >= 0 ? `${diff}分` : 'エラー';
-                            } else {
-                                updatedItem.duration = null;
-                            }
+                            } else { updatedItem.duration = null; }
                             return updatedItem;
                         }
                         return item;
@@ -116,20 +183,13 @@
                 });
             };
 
-            // ★新設：同施設モードのON/OFF切り替え
             const toggleFacilityMode = () => {
                 if (isLocked) return;
-
                 if (facilityGroupId === null) {
-                    // OFF -> ONにする処理
                     const currentItem = items[currentIndex];
-                    if (!currentItem.arrival) {
-                        showStatus("先に到着時間を記録してからONにしてください");
-                        return;
-                    }
+                    if (!currentItem.arrival) { showStatus("先に到着時間を記録してください"); return; }
                     setFacilityGroupId(currentItem.id);
                     localStorage.setItem('appFacilityGroupId', currentItem.id);
-                    
                     setItems(prev => {
                         const newItems = prev.map(item => item.id === currentItem.id ? { ...item, facilityGroupId: currentItem.id } : item);
                         localStorage.setItem('countAppData', JSON.stringify(newItems));
@@ -137,7 +197,6 @@
                     });
                     showStatus("🏢 同施設モードをONにしました");
                 } else {
-                    // ON -> OFFにする処理
                     setFacilityGroupId(null);
                     localStorage.setItem('appFacilityGroupId', 'null');
                     showStatus("🏢 同施設モードをOFFにしました");
@@ -161,20 +220,15 @@
 
             const recordAction = (id, type) => {
                 if (isLocked) return;
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('ja-JP', { hour12: false });
-                
+                const timeString = new Date().toLocaleTimeString('ja-JP', { hour12: false }).slice(0, 5);
                 setItems(prevItems => {
                     const currentItem = prevItems.find(i => i.id === id);
                     const targetGroupId = currentItem ? currentItem.facilityGroupId : null;
-
                     const newItems = prevItems.map(item => {
-                        // 出発の場合は、同じ同施設グループのアイテムも一斉に更新する
                         if (item.id === id || (type === 'departure' && targetGroupId && item.facilityGroupId === targetGroupId)) {
                             let updatedItem = { ...item, [type]: timeString };
                             const arrivalTime = type === 'arrival' ? timeString : item.arrival;
                             const departureTime = type === 'departure' ? timeString : item.departure;
-                            
                             if (arrivalTime && departureTime) {
                                 const [h1, m1] = arrivalTime.split(':').map(Number);
                                 const [h2, m2] = departureTime.split(':').map(Number);
@@ -189,32 +243,23 @@
                     return newItems;
                 });
 
-                if (type === 'departure') {
-                    setTimeout(() => {
-                        const el = document.getElementById(`del-input-${id}`);
-                        if (el) el.focus();
-                    }, 100);
-                }
-
+                if (type === 'departure') { setTimeout(() => { const el = document.getElementById(`del-input-${id}`); if (el) el.focus(); }, 100); }
                 if (!navigator.geolocation) return;
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const { latitude, longitude } = position.coords;
                         const locString = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
                         const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-
                         setItems(prevItems => {
                             const newItems = prevItems.map(item => item.id === id ? { ...item, location: locString, mapUrl: mapUrl } : item);
                             localStorage.setItem('countAppData', JSON.stringify(newItems));
                             return newItems;
                         });
-                    },
-                    () => {}, { timeout: 5000, maximumAge: 0 }
+                    }, () => {}, { timeout: 5000, maximumAge: 0 }
                 );
             };
 
-            // 音声入力関連（略式記載）
-            const startVoiceInput = (id) => { /* 既存のまま */ 
+            const startVoiceInput = (id) => {
                 if (isLocked) return;
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 if (!SpeechRecognition) return;
@@ -239,7 +284,7 @@
                 try { recognition.start(); } catch(e) { setRecordingId(null); }
             };
 
-            const startMemoVoiceInput = (id) => { /* 既存のまま */
+            const startMemoVoiceInput = (id) => {
                 if (isLocked) return;
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 if (!SpeechRecognition) return;
@@ -268,9 +313,12 @@
 
             const exportData = () => {
                 const recordedItems = items.filter(item => item.arrival || item.departure || item.del || item.pic || item.memo || (item.product && (item.product.green || item.product.blue || item.product.gray)));
-                if (recordedItems.length === 0) { showStatus("書き出すデータがありません"); return; }
+                if (recordedItems.length === 0 && !baseInfo.departure && !baseInfo.returnTime) { showStatus("書き出すデータがありません"); return; }
                 
-                const header = "No,到着時間,出発時間,滞在時間,納品商品,納品数(Del),回収数(Pic),メモ,位置情報,GoogleMap URL\n";
+                // ★CSVの先頭に拠点情報を追加
+                const baseHeader = `=== 拠点情報 ===\n拠点出発時間,拠点帰社時間,予定件数\n${baseInfo.departure || '--:--'},${baseInfo.returnTime || '--:--'},${baseInfo.targetCount || 0}件\n\n`;
+                const itemHeader = "=== 納品データ ===\nNo,到着時間,出発時間,滞在時間,納品商品,納品数(Del),回収数(Pic),メモ,位置情報,GoogleMap URL\n";
+                
                 const rows = recordedItems.map(item => {
                     const safeMemo = item.memo ? `"${item.memo.replace(/"/g, '""')}"` : "";
                     const prod = item.product || {};
@@ -282,8 +330,7 @@
                     return `${item.id},${item.arrival || ''},${item.departure || ''},${item.duration || ''},${prodStr},${item.del || ''},${item.pic || ''},${safeMemo},"${item.location || ''}",${item.mapUrl || ''}`;
                 }).join("\n");
                 
-                let greenDel = 0, blueDel = 0, grayDel = 0;
-                let greenPic = 0, bluePic = 0, grayPic = 0;
+                let greenDel = 0, blueDel = 0, grayDel = 0, greenPic = 0, bluePic = 0, grayPic = 0;
                 recordedItems.forEach(item => {
                     const d = parseInt(item.del, 10) || 0;
                     const p = parseInt(item.pic, 10) || 0;
@@ -295,7 +342,7 @@
                 const summary = `\n\n=== 商品別集計 ===\n商品,納品数(Del)合計,回収数(Pic)合計\n緑,${greenDel},${greenPic}\n青,${blueDel},${bluePic}\nグレー,${grayDel},${grayPic}\n`;
 
                 const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
-                const blob = new Blob([bom, header + rows + summary], { type: 'text/csv' });
+                const blob = new Blob([bom, baseHeader + itemHeader + rows + summary], { type: 'text/csv' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -314,16 +361,22 @@
                 const initialItems = Array.from({ length: 40 }, (_, i) => ({ 
                     id: i + 1, arrival: null, departure: null, duration: null, 
                     del: "", pic: "", memo: "", location: null, mapUrl: null, 
-                    product: { green: false, blue: false, gray: false }, facilityGroupId: null
+                    product: { green: false, blue: false, gray: false }, facilityGroupId: null, pauseStart: null
                 })); 
                 setIsLocked(false); 
                 setFacilityGroupId(null);
                 setItems(initialItems);
                 
+                // 拠点情報もリセットしてトップページに戻す
+                setBaseInfo({ targetCount: 10, departure: null, returnTime: null, isConfirmed: false });
+                setShowBase(true);
+                
                 localStorage.setItem('countAppData', JSON.stringify(initialItems));
                 localStorage.setItem('isLocked', 'false');
                 localStorage.setItem('appCurrentIndex', '0');
                 localStorage.setItem('appFacilityGroupId', 'null');
+                localStorage.setItem('appBaseInfo', JSON.stringify({ targetCount: 10, departure: null, returnTime: null, isConfirmed: false }));
+                localStorage.setItem('appShowBase', 'true');
                 
                 setCurrentIndex(0); 
                 closeDialog();
@@ -331,26 +384,17 @@
             };
 
             const goToNext = () => {
-                if (currentIndex < items.length - 1) {
+                if (currentIndex < baseInfo.targetCount - 1) {
                     const next = currentIndex + 1;
-                    
-                    // ★同施設モードがONの場合、次のアイテムにデータ（到着・メモ）を自動コピー
                     if (facilityGroupId !== null) {
                         setItems(prevItems => {
                             const parentItem = prevItems.find(i => i.id === facilityGroupId);
                             if (!parentItem) return prevItems;
                             const newItems = prevItems.map(item => {
-                                if (item.id === next + 1) { // 次のアイテム
+                                if (item.id === next + 1) {
                                     let newMemo = item.memo;
-                                    if (!newMemo.includes('同施設')) {
-                                        newMemo = newMemo ? `同施設 ${newMemo}` : '同施設';
-                                    }
-                                    return {
-                                        ...item,
-                                        facilityGroupId: facilityGroupId,
-                                        arrival: parentItem.arrival,
-                                        memo: newMemo
-                                    };
+                                    if (!newMemo.includes('同施設')) { newMemo = newMemo ? `同施設 ${newMemo}` : '同施設'; }
+                                    return { ...item, facilityGroupId: facilityGroupId, arrival: parentItem.arrival, memo: newMemo };
                                 }
                                 return item;
                             });
@@ -358,7 +402,6 @@
                             return newItems;
                         });
                     }
-
                     setCurrentIndex(next);
                     localStorage.setItem('appCurrentIndex', next);
                     setEditModeId(null);
@@ -381,18 +424,22 @@
             const isEditing = editModeId === item.id;
             const prod = item.product || { green: false, blue: false, gray: false };
             const isFacilityModeActive = facilityGroupId !== null;
+            const isPaused = item.pauseStart !== null; // ★休憩中フラグ
 
             return (
                 <div className="min-h-screen p-2 font-sans relative max-w-lg mx-auto pb-4">
-                    {/* ヘッダー */}
+                    {/* 共通ヘッダー */}
                     <header className="flex justify-between items-center mb-2 bg-white p-3 rounded-xl shadow-sm border border-gray-200">
                         <h1 className="text-lg font-bold text-gray-800 flex items-center gap-1">
-                            <MapPin size={20} className="text-red-500" /> 記録
+                            {showBase ? <Building size={20} className="text-indigo-600" /> : <MapPin size={20} className="text-red-500" />}
+                            {showBase ? "拠点 / 全体管理" : "記録アプリ"}
                         </h1>
                         <div className="flex gap-2">
                             <button onClick={exportData} className="p-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300"><Download size={20} /></button>
-                            <button onClick={() => setConfirmDialog({ isOpen: true, message: isLocked ? '入力を再開しますか？' : 'ロックしますか？', onConfirm: () => { setIsLocked(!isLocked); localStorage.setItem('isLocked', !isLocked); closeDialog(); }})} className={`p-2 rounded-lg ${isLocked ? 'bg-red-100 text-red-600 border border-red-300' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}><Lock size={20} /></button>
-                            <button onClick={() => setConfirmDialog({ isOpen: true, message: 'すべての記録をリセットして最初に戻りますか？', onConfirm: resetApp })} className="p-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300"><RotateCcw size={20} /></button>
+                            {!showBase && (
+                                <button onClick={() => setConfirmDialog({ isOpen: true, message: isLocked ? '入力を再開しますか？' : 'ロックしますか？', onConfirm: () => { setIsLocked(!isLocked); localStorage.setItem('isLocked', !isLocked); closeDialog(); }})} className={`p-2 rounded-lg ${isLocked ? 'bg-red-100 text-red-600 border border-red-300' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}><Lock size={20} /></button>
+                            )}
+                            <button onClick={() => setConfirmDialog({ isOpen: true, message: 'すべての記録と拠点設定をリセットしますか？', onConfirm: resetApp })} className="p-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300"><RotateCcw size={20} /></button>
                         </div>
                     </header>
 
@@ -402,170 +449,237 @@
                         </div>
                     )}
 
-                    {/* ナビゲーション ＆ ★同施設モードトグル */}
-                    <div className="flex flex-col gap-2 bg-white p-2 rounded-xl shadow-sm border border-gray-200 mb-2">
-                        <div className="flex justify-between items-center">
-                            <button onClick={goToPrev} disabled={currentIndex === 0} className={`p-2 rounded-lg ${currentIndex === 0 ? 'text-gray-200' : 'text-blue-600 bg-blue-50 active:bg-blue-100'}`}>
-                                <ChevronLeft size={24} />
-                            </button>
-                            <div className="text-xl font-extrabold text-gray-800">
-                                No. {item.id} <span className="text-sm text-gray-400 font-bold">/ {items.length}</span>
+                    {showBase ? (
+                        /* ================= トップページ（拠点管理） ================= */
+                        <div className="bg-white p-5 rounded-2xl shadow-md border-2 border-indigo-200 flex flex-col gap-6">
+                            
+                            <div className="flex flex-col gap-2">
+                                <label className="font-bold text-gray-700 text-center">本日の予定件数</label>
+                                <div className="flex gap-2">
+                                    <input 
+                                        type="number" min="1" max="40"
+                                        value={baseInfo.targetCount}
+                                        onChange={(e) => updateBaseInfo('targetCount', parseInt(e.target.value) || 1)}
+                                        disabled={baseInfo.isConfirmed}
+                                        className="flex-1 p-3 text-center text-3xl font-extrabold text-gray-800 border-2 border-gray-300 rounded-xl outline-none bg-gray-50"
+                                    />
+                                    <button 
+                                        onClick={() => updateBaseInfo('isConfirmed', !baseInfo.isConfirmed)}
+                                        className={`px-6 rounded-xl font-bold text-lg border-2 transition-colors ${baseInfo.isConfirmed ? 'bg-gray-200 text-gray-600 border-gray-300' : 'bg-indigo-600 text-white border-indigo-700 shadow-inner'}`}
+                                    >
+                                        {baseInfo.isConfirmed ? '変更' : '確定'}
+                                    </button>
+                                </div>
+                                <p className="text-xs text-gray-500 text-center">※確定すると指定した件数以降のページがロックされます</p>
                             </div>
-                            <button onClick={goToNext} disabled={currentIndex === items.length - 1} className={`p-2 rounded-lg ${currentIndex === items.length - 1 ? 'text-gray-200' : 'text-blue-600 bg-blue-50 active:bg-blue-100'}`}>
-                                <ChevronRight size={24} />
-                            </button>
-                        </div>
-                        <div className="flex justify-center border-t border-gray-100 pt-2">
-                            <button 
-                                onClick={toggleFacilityMode}
-                                className={`px-4 py-2 w-full max-w-xs rounded-lg text-sm font-bold border-2 transition-colors flex items-center justify-center gap-2 active:scale-95
-                                    ${isFacilityModeActive ? 'bg-indigo-100 text-indigo-700 border-indigo-400 shadow-inner' : 'bg-gray-50 text-gray-500 border-gray-300 shadow-sm'}`}
-                            >
-                                🏢 同施設モード：{isFacilityModeActive ? 'ON (連続中)' : 'OFF'}
-                            </button>
-                        </div>
-                    </div>
 
-                    <div key={item.id} className={`p-3 rounded-2xl border-2 shadow-md transition-all ${isLocked ? 'bg-gray-100 border-gray-300 opacity-90' : isFacilityModeActive ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-blue-200'}`}>
-                        
-                        {/* 滞在時間 ＆ 修正 */}
-                        <div className="flex justify-between items-center mb-3">
-                            <span className={`text-base font-bold px-3 py-1.5 rounded-lg border ${item.duration ? 'text-gray-800 bg-yellow-100 border-yellow-400' : 'text-gray-400 border-gray-200 bg-white'}`}>
-                                滞在: {item.duration || '--分'}
-                            </span>
-                            <button 
-                                onClick={() => setEditModeId(isEditing ? null : item.id)}
-                                disabled={isLocked || isFacilityModeActive}
-                                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-bold border transition-colors ${isEditing ? 'bg-indigo-600 text-white border-indigo-700' : 'bg-white text-gray-700 border-gray-300'} ${isLocked || isFacilityModeActive ? 'opacity-50' : ''}`}
-                            >
-                                {isEditing ? <Check size={16} /> : <Edit2 size={16} />}
-                                {isEditing ? '完了' : '修正'}
-                            </button>
-                        </div>
-                        
-                        {/* 到着・出発 */}
-                        <div className="grid grid-cols-2 gap-2 mb-3">
-                            {isEditing ? (
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-xs font-bold text-gray-600 text-center">到着時間を修正</label>
-                                    <input type="time" value={item.arrival || ""} onChange={(e) => handleTimeChange(item.id, 'arrival', e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded-xl text-xl font-bold text-center text-gray-800 bg-white outline-none" />
-                                </div>
-                            ) : (
+                            <div className="border-t border-gray-200 pt-6 grid grid-cols-2 gap-4">
                                 <button 
-                                    disabled={isLocked || isFacilityModeActive || (item.facilityGroupId && item.facilityGroupId !== item.id)} 
-                                    onClick={() => recordAction(item.id, 'arrival')} 
-                                    className={`py-3 rounded-xl text-lg font-extrabold shadow-sm active:scale-95 transition-all 
-                                        ${item.facilityGroupId && item.facilityGroupId !== item.id ? 'bg-gray-100 text-gray-400 border-gray-300 border-2' : 
-                                        item.arrival ? 'bg-green-600 text-white border-green-700 shadow-inner' : 'bg-white text-green-600 border-green-400 border-2'} 
-                                        ${isLocked || isFacilityModeActive ? 'opacity-70' : ''}`}
+                                    onClick={() => recordBaseTime('departure')}
+                                    className={`py-6 rounded-2xl text-2xl font-extrabold shadow-sm active:scale-95 transition-all border-2 
+                                        ${baseInfo.departure ? 'bg-green-600 text-white border-green-700 shadow-inner' : 'bg-white text-green-600 border-green-400'}`}
                                 >
-                                    {item.facilityGroupId && item.facilityGroupId !== item.id ? (
-                                        <>到着<br/><span className="text-xl">{item.arrival ? item.arrival.slice(0, 5) : '--:--'}</span><div className="text-[10px] font-normal leading-tight mt-1">連動中</div></>
-                                    ) : (
-                                        <>到着<br/><span className="text-xl">{item.arrival ? item.arrival.slice(0, 5) : '--:--'}</span></>
-                                    )}
+                                    拠点出発<br/><span className="text-3xl">{baseInfo.departure || '--:--'}</span>
                                 </button>
-                            )}
-
-                            {isEditing ? (
-                                <div className="flex flex-col gap-1">
-                                    <label className="text-xs font-bold text-gray-600 text-center">出発時間を修正</label>
-                                    <input type="time" value={item.departure || ""} onChange={(e) => handleTimeChange(item.id, 'departure', e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded-xl text-xl font-bold text-center text-gray-800 bg-white outline-none" />
-                                </div>
-                            ) : (
                                 <button 
-                                    disabled={isLocked || isFacilityModeActive} 
-                                    onClick={() => recordAction(item.id, 'departure')} 
-                                    className={`py-3 rounded-xl text-lg font-extrabold shadow-sm active:scale-95 transition-all 
-                                        ${isFacilityModeActive ? 'bg-indigo-100 text-indigo-500 border-indigo-300 border-2' : 
-                                        item.departure ? 'bg-blue-600 text-white border-blue-700 shadow-inner' : 'bg-white text-blue-600 border-blue-400 border-2'} 
-                                        ${isLocked ? 'opacity-50' : ''}`}
+                                    onClick={() => recordBaseTime('returnTime')}
+                                    className={`py-6 rounded-2xl text-2xl font-extrabold shadow-sm active:scale-95 transition-all border-2
+                                        ${baseInfo.returnTime ? 'bg-blue-600 text-white border-blue-700 shadow-inner' : 'bg-white text-blue-600 border-blue-400'}`}
                                 >
-                                    {isFacilityModeActive ? (
-                                        <div className="flex flex-col h-full justify-center text-sm px-2">モードOFFで<br/>出発を入力</div>
-                                    ) : (
-                                        <>出発<br/><span className="text-xl">{item.departure ? item.departure.slice(0, 5) : '--:--'}</span></>
-                                    )}
+                                    帰社<br/><span className="text-3xl">{baseInfo.returnTime || '--:--'}</span>
+                                </button>
+                            </div>
+
+                            {baseInfo.isConfirmed && (
+                                <button 
+                                    onClick={startWork}
+                                    className="mt-2 py-5 w-full rounded-2xl text-2xl font-extrabold bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg border-b-4 border-indigo-800 flex items-center justify-center gap-2 active:scale-95"
+                                >
+                                    {items[0].arrival ? '作業に戻る' : '業務開始 (No.1へ)'} <ChevronRight size={28} />
                                 </button>
                             )}
                         </div>
-
-                        {/* 商品選択ボタン */}
-                        <div className="mb-3 bg-white p-2 rounded-xl border border-gray-200">
-                            <label className="block text-xs font-bold text-gray-600 mb-1.5 text-center">納品商品 (タップで選択)</label>
-                            <div className="flex gap-2">
-                                <button disabled={isLocked} onClick={() => toggleProduct(item.id, 'green')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.green ? 'bg-green-500 text-white border-green-600 shadow-inner' : 'bg-white text-green-600 border-green-300'} ${isLocked ? 'opacity-50' : ''}`}>緑</button>
-                                <button disabled={isLocked} onClick={() => toggleProduct(item.id, 'blue')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.blue ? 'bg-blue-500 text-white border-blue-600 shadow-inner' : 'bg-white text-blue-600 border-blue-300'} ${isLocked ? 'opacity-50' : ''}`}>青</button>
-                                <button disabled={isLocked} onClick={() => toggleProduct(item.id, 'gray')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.gray ? 'bg-gray-500 text-white border-gray-600 shadow-inner' : 'bg-white text-gray-600 border-gray-300'} ${isLocked ? 'opacity-50' : ''}`}>グレー</button>
-                            </div>
-                        </div>
-
-                        {/* Del/Pic 枠 */}
-                        <div className="flex items-center gap-2 mb-3 bg-white p-2 rounded-xl border border-gray-200">
-                            <span className="text-sm font-bold text-gray-600 w-12 text-center leading-tight">Del/Pic</span>
-                            <div className="flex flex-1 items-center bg-white rounded-lg border border-gray-300 overflow-hidden shadow-inner h-12">
-                                <input id={`del-input-${item.id}`} type="number" value={item.del} onChange={(e) => handleTextChange(item.id, 'del', e.target.value)} disabled={isLocked} className="w-full p-2 text-center text-xl font-bold text-gray-800 outline-none" placeholder="納品" />
-                                <span className="bg-gray-200 h-full w-px"></span>
-                                <input type="number" value={item.pic} onChange={(e) => handleTextChange(item.id, 'pic', e.target.value)} disabled={isLocked} className="w-full p-2 text-center text-xl font-bold text-gray-800 outline-none" placeholder="回収" />
-                            </div>
-                            <button onClick={() => startVoiceInput(item.id)} disabled={isLocked || recordingId === `num-${item.id}`} className={`w-12 h-12 rounded-lg flex items-center justify-center border shadow-sm ${recordingId === `num-${item.id}` ? 'bg-red-500 border-red-600 text-white animate-pulse' : 'bg-gray-100 border-gray-300 text-gray-700'} ${isLocked ? 'opacity-50' : ''}`}>
-                                <Mic size={20} />
-                            </button>
-                        </div>
-
-                        {/* Memo 枠 */}
-                        <div className="flex items-center gap-2 mb-2 bg-white p-2 rounded-xl border border-gray-200">
-                            <span className="text-sm font-bold text-gray-600 w-12 text-center">Memo</span>
-                            <div className="flex flex-1 bg-white rounded-lg border border-gray-300 shadow-inner h-12">
-                                <input 
-                                    type="text" 
-                                    inputMode="email"
-                                    value={item.memo} 
-                                    onChange={(e) => handleTextChange(item.id, 'memo', e.target.value)} 
-                                    disabled={isLocked} 
-                                    className="w-full p-2 text-lg font-bold text-gray-800 outline-none rounded-lg" 
-                                    placeholder="英数字・記号" 
-                                />
-                            </div>
-                            <button onClick={() => startMemoVoiceInput(item.id)} disabled={isLocked || recordingId === `memo-${item.id}`} className={`w-12 h-12 rounded-lg flex items-center justify-center border shadow-sm ${recordingId === `memo-${item.id}` ? 'bg-red-500 border-red-600 text-white animate-pulse' : 'bg-gray-100 border-gray-300 text-gray-700'} ${isLocked ? 'opacity-50' : ''}`}>
-                                <Mic size={20} />
-                            </button>
-                        </div>
-                        
-                        {/* 位置情報 */}
-                        <div className="h-5 flex items-center justify-end">
-                            {item.mapUrl ? (
-                                <a href={item.mapUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-blue-600 truncate flex items-center gap-1 hover:underline">
-                                    <ExternalLink size={12} /> マップで開く ({item.location})
-                                </a>
-                            ) : item.location ? (
-                                <div className="text-xs font-bold text-gray-500 truncate flex items-center gap-1"><MapPin size={12} /> {item.location}</div>
-                            ) : null}
-                        </div>
-                    </div>
-
-                    {/* 次へ進むボタン */}
-                    {currentIndex < items.length - 1 && (
-                        <button 
-                            onClick={goToNext} 
-                            disabled={isLocked}
-                            className={`mt-3 py-4 w-full rounded-xl text-xl font-bold shadow-md flex items-center justify-center gap-2 active:scale-95 ${isLocked ? 'hidden' : 'bg-indigo-600 text-white hover:bg-indigo-500'}`}
-                        >
-                            <span>✅ 完了して次へ (No. {item.id + 1})</span>
-                            <ChevronRight size={24} />
-                        </button>
-                    )}
-
-                    {confirmDialog.isOpen && (
-                        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-                            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden border">
-                                <div className="p-4 text-lg font-bold text-gray-800 border-b text-center">確認</div>
-                                <div className="p-6 text-gray-700 text-base text-center font-bold">{confirmDialog.message}</div>
-                                <div className="p-4 bg-gray-50 flex justify-center gap-3">
-                                    <button onClick={closeDialog} className="px-5 py-3 rounded-lg font-bold text-gray-700 bg-gray-200 hover:bg-gray-300">キャンセル</button>
-                                    <button onClick={confirmDialog.onConfirm} className="px-5 py-3 rounded-lg font-bold bg-blue-600 text-white hover:bg-blue-700">はい</button>
+                    ) : (
+                        /* ================= アイテムページ ================= */
+                        <div className="flex flex-col gap-2">
+                            {/* ナビゲーション ＆ 同施設モードトグル */}
+                            <div className="flex flex-col gap-2 bg-white p-2 rounded-xl shadow-sm border border-gray-200">
+                                <div className="flex justify-between items-center">
+                                    <button onClick={() => currentIndex === 0 ? goToTopPage() : goToPrev()} className="p-2 rounded-lg text-blue-600 bg-blue-50 active:bg-blue-100">
+                                        <ChevronLeft size={24} />
+                                    </button>
+                                    <div className="text-xl font-extrabold text-gray-800">
+                                        No. {item.id} <span className="text-sm text-gray-400 font-bold">/ {baseInfo.targetCount}</span>
+                                    </div>
+                                    <button onClick={() => currentIndex >= baseInfo.targetCount - 1 ? goToTopPage() : goToNext()} className="p-2 rounded-lg text-blue-600 bg-blue-50 active:bg-blue-100">
+                                        {currentIndex >= baseInfo.targetCount - 1 ? <Building size={24} /> : <ChevronRight size={24} />}
+                                    </button>
+                                </div>
+                                <div className="flex justify-center border-t border-gray-100 pt-2">
+                                    <button 
+                                        disabled={isPaused}
+                                        onClick={toggleFacilityMode}
+                                        className={`px-4 py-2 w-full max-w-xs rounded-lg text-sm font-bold border-2 transition-colors flex items-center justify-center gap-2 active:scale-95
+                                            ${isFacilityModeActive ? 'bg-indigo-100 text-indigo-700 border-indigo-400 shadow-inner' : 'bg-gray-50 text-gray-500 border-gray-300 shadow-sm'}
+                                            ${isPaused ? 'opacity-50' : ''}`}
+                                    >
+                                        🏢 同施設モード：{isFacilityModeActive ? 'ON (連続中)' : 'OFF'}
+                                    </button>
                                 </div>
                             </div>
+
+                            <div key={item.id} className={`p-3 rounded-2xl border-2 shadow-md transition-all ${isLocked ? 'bg-gray-100 border-gray-300 opacity-90' : isFacilityModeActive ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-blue-200'}`}>
+                                
+                                {/* ★新機能：休憩ボタン（ロック処理の対象外として一番上に配置） */}
+                                <div className="mb-4">
+                                    <button 
+                                        onClick={() => togglePause(item.id)}
+                                        disabled={isLocked}
+                                        className={`w-full py-4 rounded-xl text-lg font-extrabold border-2 shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95
+                                            ${isPaused ? 'bg-orange-500 text-white border-orange-600 shadow-inner animate-pulse' : 'bg-white text-orange-600 border-orange-300'}
+                                            ${isLocked ? 'opacity-50' : ''}`}
+                                    >
+                                        <Coffee size={24} />
+                                        {isPaused ? `休憩を終了する (開始: ${item.pauseStart})` : '☕ 休憩を開始する'}
+                                    </button>
+                                </div>
+
+                                {/* ★休憩中は以下の要素を薄くしてタッチ無効にする */}
+                                <div className={`transition-all duration-300 ${isPaused ? 'opacity-40 pointer-events-none grayscale' : ''}`}>
+                                    
+                                    <div className="flex justify-between items-center mb-3">
+                                        <span className={`text-base font-bold px-3 py-1.5 rounded-lg border ${item.duration ? 'text-gray-800 bg-yellow-100 border-yellow-400' : 'text-gray-400 border-gray-200 bg-white'}`}>
+                                            滞在: {item.duration || '--分'}
+                                        </span>
+                                        <button 
+                                            onClick={() => setEditModeId(isEditing ? null : item.id)}
+                                            disabled={isLocked || isFacilityModeActive}
+                                            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-bold border transition-colors ${isEditing ? 'bg-indigo-600 text-white border-indigo-700' : 'bg-white text-gray-700 border-gray-300'} ${isLocked || isFacilityModeActive ? 'opacity-50' : ''}`}
+                                        >
+                                            {isEditing ? <Check size={16} /> : <Edit2 size={16} />}
+                                            {isEditing ? '完了' : '修正'}
+                                        </button>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 gap-2 mb-3">
+                                        {isEditing ? (
+                                            <div className="flex flex-col gap-1">
+                                                <label className="text-xs font-bold text-gray-600 text-center">到着時間を修正</label>
+                                                <input type="time" value={item.arrival || ""} onChange={(e) => handleTimeChange(item.id, 'arrival', e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded-xl text-xl font-bold text-center text-gray-800 bg-white outline-none" />
+                                            </div>
+                                        ) : (
+                                            <button 
+                                                disabled={isLocked || isFacilityModeActive || (item.facilityGroupId && item.facilityGroupId !== item.id)} 
+                                                onClick={() => recordAction(item.id, 'arrival')} 
+                                                className={`py-3 rounded-xl text-lg font-extrabold shadow-sm active:scale-95 transition-all 
+                                                    ${item.facilityGroupId && item.facilityGroupId !== item.id ? 'bg-gray-100 text-gray-400 border-gray-300 border-2' : 
+                                                    item.arrival ? 'bg-green-600 text-white border-green-700 shadow-inner' : 'bg-white text-green-600 border-green-400 border-2'} 
+                                                    ${isLocked || isFacilityModeActive ? 'opacity-70' : ''}`}
+                                            >
+                                                {item.facilityGroupId && item.facilityGroupId !== item.id ? (
+                                                    <>到着<br/><span className="text-xl">{item.arrival ? item.arrival.slice(0, 5) : '--:--'}</span><div className="text-[10px] font-normal leading-tight mt-1">連動中</div></>
+                                                ) : (
+                                                    <>到着<br/><span className="text-xl">{item.arrival ? item.arrival.slice(0, 5) : '--:--'}</span></>
+                                                )}
+                                            </button>
+                                        )}
+
+                                        {isEditing ? (
+                                            <div className="flex flex-col gap-1">
+                                                <label className="text-xs font-bold text-gray-600 text-center">出発時間を修正</label>
+                                                <input type="time" value={item.departure || ""} onChange={(e) => handleTimeChange(item.id, 'departure', e.target.value)} className="w-full p-2 border-2 border-gray-300 rounded-xl text-xl font-bold text-center text-gray-800 bg-white outline-none" />
+                                            </div>
+                                        ) : (
+                                            <button 
+                                                disabled={isLocked || isFacilityModeActive} 
+                                                onClick={() => recordAction(item.id, 'departure')} 
+                                                className={`py-3 rounded-xl text-lg font-extrabold shadow-sm active:scale-95 transition-all 
+                                                    ${isFacilityModeActive ? 'bg-indigo-100 text-indigo-500 border-indigo-300 border-2' : 
+                                                    item.departure ? 'bg-blue-600 text-white border-blue-700 shadow-inner' : 'bg-white text-blue-600 border-blue-400 border-2'} 
+                                                    ${isLocked ? 'opacity-50' : ''}`}
+                                            >
+                                                {isFacilityModeActive ? (
+                                                    <div className="flex flex-col h-full justify-center text-sm px-2">モードOFFで<br/>出発を入力</div>
+                                                ) : (
+                                                    <>出発<br/><span className="text-xl">{item.departure ? item.departure.slice(0, 5) : '--:--'}</span></>
+                                                )}
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <div className="mb-3 bg-white p-2 rounded-xl border border-gray-200">
+                                        <label className="block text-xs font-bold text-gray-600 mb-1.5 text-center">納品商品 (タップで選択)</label>
+                                        <div className="flex gap-2">
+                                            <button disabled={isLocked} onClick={() => toggleProduct(item.id, 'green')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.green ? 'bg-green-500 text-white border-green-600 shadow-inner' : 'bg-white text-green-600 border-green-300'} ${isLocked ? 'opacity-50' : ''}`}>緑</button>
+                                            <button disabled={isLocked} onClick={() => toggleProduct(item.id, 'blue')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.blue ? 'bg-blue-500 text-white border-blue-600 shadow-inner' : 'bg-white text-blue-600 border-blue-300'} ${isLocked ? 'opacity-50' : ''}`}>青</button>
+                                            <button disabled={isLocked} onClick={() => toggleProduct(item.id, 'gray')} className={`flex-1 py-2.5 rounded-lg text-lg font-extrabold border-2 transition-all ${prod.gray ? 'bg-gray-500 text-white border-gray-600 shadow-inner' : 'bg-white text-gray-600 border-gray-300'} ${isLocked ? 'opacity-50' : ''}`}>グレー</button>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 mb-3 bg-white p-2 rounded-xl border border-gray-200">
+                                        <span className="text-sm font-bold text-gray-600 w-12 text-center leading-tight">Del/Pic</span>
+                                        <div className="flex flex-1 items-center bg-white rounded-lg border border-gray-300 overflow-hidden shadow-inner h-12">
+                                            <input id={`del-input-${item.id}`} type="number" value={item.del} onChange={(e) => handleTextChange(item.id, 'del', e.target.value)} disabled={isLocked} className="w-full p-2 text-center text-xl font-bold text-gray-800 outline-none" placeholder="納品" />
+                                            <span className="bg-gray-200 h-full w-px"></span>
+                                            <input type="number" value={item.pic} onChange={(e) => handleTextChange(item.id, 'pic', e.target.value)} disabled={isLocked} className="w-full p-2 text-center text-xl font-bold text-gray-800 outline-none" placeholder="回収" />
+                                        </div>
+                                        <button onClick={() => startVoiceInput(item.id)} disabled={isLocked || recordingId === `num-${item.id}`} className={`w-12 h-12 rounded-lg flex items-center justify-center border shadow-sm ${recordingId === `num-${item.id}` ? 'bg-red-500 border-red-600 text-white animate-pulse' : 'bg-gray-100 border-gray-300 text-gray-700'} ${isLocked ? 'opacity-50' : ''}`}>
+                                            <Mic size={20} />
+                                        </button>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 mb-2 bg-white p-2 rounded-xl border border-gray-200">
+                                        <span className="text-sm font-bold text-gray-600 w-12 text-center">Memo</span>
+                                        <div className="flex flex-1 bg-white rounded-lg border border-gray-300 shadow-inner h-12">
+                                            <input 
+                                                type="text" inputMode="email"
+                                                value={item.memo} 
+                                                onChange={(e) => handleTextChange(item.id, 'memo', e.target.value)} 
+                                                disabled={isLocked} 
+                                                className="w-full p-2 text-lg font-bold text-gray-800 outline-none rounded-lg" 
+                                                placeholder="英数字・記号" 
+                                            />
+                                        </div>
+                                        <button onClick={() => startMemoVoiceInput(item.id)} disabled={isLocked || recordingId === `memo-${item.id}`} className={`w-12 h-12 rounded-lg flex items-center justify-center border shadow-sm ${recordingId === `memo-${item.id}` ? 'bg-red-500 border-red-600 text-white animate-pulse' : 'bg-gray-100 border-gray-300 text-gray-700'} ${isLocked ? 'opacity-50' : ''}`}>
+                                            <Mic size={20} />
+                                        </button>
+                                    </div>
+                                    
+                                    <div className="h-5 flex items-center justify-end">
+                                        {item.mapUrl ? (
+                                            <a href={item.mapUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-blue-600 truncate flex items-center gap-1 hover:underline">
+                                                <ExternalLink size={12} /> マップで開く ({item.location})
+                                            </a>
+                                        ) : item.location ? (
+                                            <div className="text-xs font-bold text-gray-500 truncate flex items-center gap-1"><MapPin size={12} /> {item.location}</div>
+                                        ) : null}
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            {/* 次へ進む / トップへ戻る ボタン */}
+                            {!isPaused && (
+                                currentIndex < baseInfo.targetCount - 1 ? (
+                                    <button 
+                                        onClick={goToNext} 
+                                        disabled={isLocked}
+                                        className={`mt-2 py-4 w-full rounded-xl text-xl font-bold shadow-md flex items-center justify-center gap-2 active:scale-95 ${isLocked ? 'hidden' : 'bg-indigo-600 text-white hover:bg-indigo-500'}`}
+                                    >
+                                        <span>✅ 完了して次へ (No. {item.id + 1})</span>
+                                        <ChevronRight size={24} />
+                                    </button>
+                                ) : (
+                                    <button 
+                                        onClick={goToTopPage} 
+                                        disabled={isLocked}
+                                        className={`mt-2 py-4 w-full rounded-xl text-xl font-bold shadow-md flex items-center justify-center gap-2 active:scale-95 ${isLocked ? 'hidden' : 'bg-gray-800 text-white hover:bg-gray-700 border-b-4 border-gray-900'}`}
+                                    >
+                                        <span>🏁 完了して拠点へ戻る</span>
+                                        <Building size={24} />
+                                    </button>
+                                )
+                            )}
                         </div>
                     )}
                 </div>
@@ -577,5 +691,3 @@
     </script>
 </body>
 </html>
-
-
