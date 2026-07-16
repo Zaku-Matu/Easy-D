@@ -42,80 +42,75 @@
         const Coffee = ({ size, className }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>;
 
         function App() {
-            // --- ステート管理 ---
-            const [items, setItems] = useState([]);
-            const [isLocked, setIsLocked] = useState(false);
+            // ★改良：どんなにデータが壊れていても絶対に確実に起動させるための強靭な初期化処理
+            const [items, setItems] = useState(() => {
+                const initialItems = Array.from({ length: 40 }, (_, i) => ({
+                    id: i + 1, arrival: null, departure: null, duration: null,
+                    del: "", pic: "", memo: "", location: null, mapUrl: null,
+                    product: { green: false, blue: false, gray: false },
+                    facilityGroupId: null,
+                    pauseStart: null 
+                }));
+
+                try {
+                    const savedData = localStorage.getItem('countAppData');
+                    if (savedData) {
+                        const parsed = JSON.parse(savedData);
+                        return parsed.map((item, index) => {
+                            const init = initialItems[index] || {};
+                            return {
+                                ...init,
+                                ...item,
+                                product: item.product || { green: false, blue: false, gray: false },
+                                facilityGroupId: item.facilityGroupId || null,
+                                // 強制的に安全な文字列に変換してバグを防ぐ
+                                pauseStart: (!item.pauseStart || item.pauseStart === "undefined") ? null : String(item.pauseStart),
+                                arrival: item.arrival ? String(item.arrival).substring(0, 5) : null,
+                                departure: item.departure ? String(item.departure).substring(0, 5) : null
+                            };
+                        });
+                    }
+                } catch(e) {
+                    console.error("データの修復に失敗しました。初期化して起動します", e);
+                }
+                return initialItems;
+            });
+
+            const [baseInfo, setBaseInfo] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('appBaseInfo');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        return {
+                            targetCount: parseInt(parsed.targetCount) || 10,
+                            departure: parsed.departure || null,
+                            returnTime: parsed.returnTime || null,
+                            isConfirmed: !!parsed.isConfirmed
+                        };
+                    }
+                } catch(e) {
+                    console.error("拠点情報の読み込みエラー", e);
+                }
+                return { targetCount: 10, departure: null, returnTime: null, isConfirmed: false };
+            });
+
+            const [showBase, setShowBase] = useState(() => localStorage.getItem('appShowBase') !== 'false');
+            const [isLocked, setIsLocked] = useState(() => localStorage.getItem('isLocked') === 'true');
+            const [currentIndex, setCurrentIndex] = useState(() => parseInt(localStorage.getItem('appCurrentIndex') || '0', 10));
+            const [facilityGroupId, setFacilityGroupId] = useState(() => {
+                const saved = localStorage.getItem('appFacilityGroupId');
+                return (saved && saved !== 'null') ? parseInt(saved, 10) : null;
+            });
+
             const [statusMsg, setStatusMsg] = useState("");
             const [recordingId, setRecordingId] = useState(null);
             const [editModeId, setEditModeId] = useState(null);
             const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, message: "", onConfirm: null });
 
-            const [showBase, setShowBase] = useState(() => {
-                const saved = localStorage.getItem('appShowBase');
-                return saved !== null ? saved === 'true' : true;
-            });
-
-            const [baseInfo, setBaseInfo] = useState(() => {
-                const saved = localStorage.getItem('appBaseInfo');
-                return saved ? JSON.parse(saved) : { targetCount: 10, departure: null, returnTime: null, isConfirmed: false };
-            });
-
-            const [currentIndex, setCurrentIndex] = useState(() => {
-                const savedIndex = localStorage.getItem('appCurrentIndex');
-                return savedIndex !== null ? parseInt(savedIndex, 10) : 0;
-            });
-
-            const [facilityGroupId, setFacilityGroupId] = useState(() => {
-                const savedGroupId = localStorage.getItem('appFacilityGroupId');
-                return savedGroupId && savedGroupId !== 'null' ? parseInt(savedGroupId, 10) : null;
-            });
-
-            // ★改良1：時間を「必ず 00:00 形式の5文字」で取得する専用機能
             const getTimeString = () => {
                 const now = new Date();
-                const h = now.getHours().toString().padStart(2, '0');
-                const m = now.getMinutes().toString().padStart(2, '0');
-                return `${h}:${m}`;
+                return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
             };
-
-            // --- 初期化＆データ修復 ---
-            useEffect(() => {
-                const savedData = localStorage.getItem('countAppData');
-                const savedLock = localStorage.getItem('isLocked');
-                
-                if (savedData) {
-                    try {
-                        let parsed = JSON.parse(savedData);
-                        // ★改良2：過去のバグったデータを自動で綺麗に直す（修復処理）
-                        parsed = parsed.map(item => ({
-                            ...item,
-                            product: item.product || { green: false, blue: false, gray: false },
-                            facilityGroupId: item.facilityGroupId || null,
-                            // undefinedという文字列が入っていたら強制的にnullに戻す
-                            pauseStart: (item.pauseStart === "undefined" || item.pauseStart === undefined) ? null : item.pauseStart,
-                            // 7:30: などのゴミが入っていたらキレイにする
-                            arrival: item.arrival ? item.arrival.replace(':', ':').substring(0, 5) : null,
-                            departure: item.departure ? item.departure.replace(':', ':').substring(0, 5) : null
-                        }));
-                        setItems(parsed);
-                        // 念のためローカルストレージも修復版で上書き
-                        localStorage.setItem('countAppData', JSON.stringify(parsed));
-                    } catch(e) {
-                        // 万が一データが壊れすぎていたら初期化
-                        console.error(e);
-                    }
-                    setIsLocked(savedLock === 'true');
-                } else {
-                    const initialItems = Array.from({ length: 40 }, (_, i) => ({
-                        id: i + 1, arrival: null, departure: null, duration: null,
-                        del: "", pic: "", memo: "", location: null, mapUrl: null,
-                        product: { green: false, blue: false, gray: false },
-                        facilityGroupId: null,
-                        pauseStart: null 
-                    }));
-                    setItems(initialItems);
-                }
-            }, []);
 
             // --- 拠点情報・画面切り替えの処理 ---
             const updateBaseInfo = (field, value) => {
@@ -151,7 +146,6 @@
             // --- 休憩ロック機能の処理 ---
             const togglePause = (id) => {
                 const timeString = getTimeString();
-
                 setItems(prev => {
                     const newItems = prev.map(item => {
                         if (item.id === id) {
@@ -172,6 +166,7 @@
                 });
             };
 
+            // --- 既存の処理 ---
             const handleTextChange = (id, field, value) => {
                 if (field === 'memo') { value = value.replace(/[^\x20-\x7E]/g, ''); }
                 setItems(prev => {
@@ -191,7 +186,6 @@
                             if (field === 'arrival' || field === 'departure') { updatedItem[field] = value; }
                             
                             if (updatedItem.arrival && updatedItem.departure) {
-                                // 時間計算のバグ防止
                                 const h1 = parseInt(updatedItem.arrival.split(':')[0], 10) || 0;
                                 const m1 = parseInt(updatedItem.arrival.split(':')[1], 10) || 0;
                                 const h2 = parseInt(updatedItem.departure.split(':')[0], 10) || 0;
@@ -387,6 +381,7 @@
 
             const closeDialog = () => setConfirmDialog({ isOpen: false, message: "", onConfirm: null });
 
+            // ★完全リセット機能
             const resetApp = () => {
                 const initialItems = Array.from({ length: 40 }, (_, i) => ({ 
                     id: i + 1, arrival: null, departure: null, duration: null, 
@@ -400,12 +395,7 @@
                 setBaseInfo({ targetCount: 10, departure: null, returnTime: null, isConfirmed: false });
                 setShowBase(true);
                 
-                localStorage.setItem('countAppData', JSON.stringify(initialItems));
-                localStorage.setItem('isLocked', 'false');
-                localStorage.setItem('appCurrentIndex', '0');
-                localStorage.setItem('appFacilityGroupId', 'null');
-                localStorage.setItem('appBaseInfo', JSON.stringify({ targetCount: 10, departure: null, returnTime: null, isConfirmed: false }));
-                localStorage.setItem('appShowBase', 'true');
+                localStorage.clear(); // 古いバグデータを完全に消去！
                 
                 setCurrentIndex(0); 
                 closeDialog();
@@ -448,14 +438,17 @@
                 }
             };
 
-            if (items.length === 0) return null;
+            // ここでitemsが空になることは絶対にないが念のため
+            if (!items || items.length === 0) return null;
+
             const item = items[currentIndex];
+            // 万が一itemがundefinedの時のための安全策
+            if (!item) return null;
+
             const isEditing = editModeId === item.id;
             const prod = item.product || { green: false, blue: false, gray: false };
             const isFacilityModeActive = facilityGroupId !== null;
-            
-            // ★改良3：本当に休憩中かどうかを正しく判定する
-            const isPaused = !!item.pauseStart && item.pauseStart !== "undefined"; 
+            const isPaused = !!item.pauseStart; 
 
             return (
                 <div className="min-h-screen p-2 font-sans relative max-w-lg mx-auto pb-4">
@@ -522,7 +515,7 @@
                                     onClick={startWork}
                                     className="mt-2 py-5 w-full rounded-2xl text-2xl font-extrabold bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg border-b-4 border-indigo-800 flex items-center justify-center gap-2 active:scale-95"
                                 >
-                                    {items[0].arrival ? '作業に戻る' : '業務開始 (No.1へ)'} <ChevronRight size={28} />
+                                    {items[0] && items[0].arrival ? '作業に戻る' : '業務開始 (No.1へ)'} <ChevronRight size={28} />
                                 </button>
                             )}
                         </div>
